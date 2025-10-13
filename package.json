@@ -1,0 +1,48 @@
+{
+  "name": "msgsync",
+  "version": "1.0.0",
+  "description": "A powerful SMS platform for seamless message synchronization and delivery",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "dev": "node index.js",
+    "start": "node index.js",
+    "build": "npm run build --workspaces",
+    "format": "prettier --write \"**/*.{js,json,md}\""
+  },
+  "keywords": [
+    "sms",
+    "messaging",
+    "sync",
+    "platform",
+    "aggregator",
+    "sdk"
+  ],
+  "author": "MsgSync Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/MsgSync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/MsgSync/issues"
+  },
+  "homepage": "https://github.com/yourusername/MsgSync#readme",
+  "workspaces": [
+    "platform",
+    "aggregator",
+    "sdk/*"
+  ],
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
