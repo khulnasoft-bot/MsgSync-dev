@@ -6,6 +6,7 @@ const otpRoutes = require('./routes/otp');
 const bulkRoutes = require('./routes/bulk');
 const organizationRoutes = require('./routes/organizations');
 const bundleRoutes = require('./routes/bundles');
+const rateRoutes = require('./routes/rates');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -50,6 +51,11 @@ app.get('/bundles', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'bundles.html'));
 });
 
+// Coverage & Rates Route
+app.get('/coverage', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'coverage.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -57,6 +63,7 @@ app.use('/api/otp', otpRoutes);
 app.use('/api/bulk', bulkRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/bundles', bundleRoutes);
+app.use('/api/network', rateRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

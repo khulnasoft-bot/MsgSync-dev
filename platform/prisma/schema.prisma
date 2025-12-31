@@ -24,6 +24,7 @@ model Organization {
   contactLists ContactList[]
   transactions Transaction[]
   subscriptions BundleSubscription[]
+  senderIds   SenderId[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
@@ -149,6 +150,29 @@ model Campaign {
   messages       Message[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+}
+
+model Rate {
+  id             String   @id @default(uuid())
+  country        String
+  prefix         String   @unique // e.g., "1" for US, "44" for UK
+  costPerSms     Decimal  @default(0.01)
+  status         String   @default("ACTIVE") // ACTIVE, INACTIVE
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SenderId {
+  id             String       @id @default(uuid())
+  name           String       // e.g., "MSG_SYNC"
+  type           String       @default("ALPHANUMERIC") // ALPHANUMERIC, NUMERIC
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  status         String       @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([name, organizationId])
 }
 
 model Provider {
