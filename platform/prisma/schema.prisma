@@ -70,6 +70,7 @@ model Organization {
   users       User[]
   auditLogs   AuditLog[]
   invoices    Invoice[]
+  alerts      Alert[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
@@ -335,4 +336,16 @@ model HlrConfig {
   mapping        Json?    // Response mapping (e.g. { "carrier": "data.carrier_name", "ported": "data.is_ported" })
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+model Alert {
+  id             String       @id @default(uuid())
+  name           String
+  type           String       // BALANCE_LOW, DELIVERY_FAILURE_HIGH, VOLUME_SPIKE
+  threshold      Float
+  status         String       @default("ACTIVE") // ACTIVE, TRIGGERED, DISABLED
+  notificationEmail String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

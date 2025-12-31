@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getStats, getTrends } = require('../controllers/analytics');
+const { getStats, getTrends, getFinancials, getReports, getLiveTraffic, getAlerts, saveAlert, deleteAlert } = require('../controllers/analytics');
 const authenticate = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimiter');
 
@@ -9,6 +9,11 @@ router.use(apiLimiter);
 
 router.get('/stats', getStats);
 router.get('/trends', getTrends);
-router.get('/financials', require('../controllers/analytics').getFinancials);
+router.get('/financials', getFinancials);
+router.get('/reports', getReports);
+router.get('/live-traffic', getLiveTraffic);
+router.get('/alerts', getAlerts);
+router.post('/alerts', saveAlert);
+router.delete('/alerts/:id', deleteAlert);
 
 module.exports = router;

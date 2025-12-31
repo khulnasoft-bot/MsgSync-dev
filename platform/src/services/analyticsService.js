@@ -99,13 +99,115 @@ class AnalyticsService {
         const profit = revenue - cost;
         const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
 
+        // Get breakdown by profile
+        const profileBreakdown = await prisma.message.groupBy({
+            by: ['profile'],
+            where,
+            _sum: {
+                price: true
+            }
+        });
+
         return {
             revenue,
             cost,
             profit,
             margin,
-            messageCount: summary._count._all
+            messageCount: summary._count._all,
+            profileBreakdown: profileBreakdown.map(p => ({
+                profile: p.profile,
+                revenue: parseFloat(p._sum.price || 0)
+            }))
         };
+    }
+
+    /**
+     * Gets detailed message reports with pagination and filtering.
+     */
+    async getDetailedReports(filters = {}, skip = 0, take = 50) {
+        const where = {};
+        if (filters.organizationId) where.organizationId = filters.organizationId;
+        if (filters.status) where.status = filters.status;
+        if (filters.profile) where.profile = filters.profile;
+        if (filters.startDate && filters.endDate) {
+            where.createdAt = {
+                gte: new Date(filters.startDate),
+                lte: new Date(filters.endDate)
+            };
+        }
+
+        const [messages, total] = await Promise.all([
+            prisma.message.findMany({
+                where,
+                skip,
+                take,
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    apiKey: { select: { name: true } }
+                }
+            }),
+            prisma.message.count({ where })
+        ]);
+
+        return { messages, total };
+    }
+
+    /**
+     * Gets recent messages for real-time traffic monitoring.
+     */
+    async getLiveTraffic(organizationId = null, limit = 100) {
+        const where = {};
+        if (organizationId) where.organizationId = organizationId;
+
+        return await prisma.message.findMany({
+            where,
+            take: limit,
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                recipient: true,
+                status: true,
+                provider: true,
+                createdAt: true,
+                cost: true,
+                price: true,
+                sentiment: true
+            }
+        });
+    }
+
+    /**
+     * Gets active alerts for an organization.
+     */
+    async getAlerts(organizationId) {
+        return await prisma.alert.findMany({
+            where: { organizationId },
+            orderBy: { createdAt: 'desc' }
+        });
+    }
+
+    /**
+     * Creates or updates an alert.
+     */
+    async saveAlert(organizationId, alertData) {
+        if (alertData.id) {
+            return await prisma.alert.update({
+                where: { id: alertData.id, organizationId },
+                data: alertData
+            });
+        }
+        return await prisma.alert.create({
+            data: {
+                ...alertData,
+                organizationId
+            }
+        });
+    }
+
+    async deleteAlert(organizationId, alertId) {
+        return await prisma.alert.delete({
+            where: { id: alertId, organizationId }
+        });
     }
 }
 
