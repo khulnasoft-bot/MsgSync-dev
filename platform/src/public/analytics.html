@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
             --primary: #8b5cf6;
@@ -99,6 +101,41 @@
             margin-bottom: 2rem;
         }
 
+        #map-container {
+            height: 400px;
+            border-radius: 1rem;
+            width: 100%;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--sidebar-bg);
+            padding: 0.4rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.75rem;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -148,54 +185,63 @@
     <aside>
         <div class="logo"><i data-lucide="zap"></i><span>MsgSync</span></div>
         <nav>
-            <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="/analytics" class="nav-item active"><i data-lucide="bar-chart-3"></i> Analytics</a>
-            <a href="/clients" class="nav-item"><i data-lucide="users"></i> Clients</a>
-            <a href="/campaigns" class="nav-item"><i data-lucide="mail"></i> Campaigns</a>
-            <a href="/billing" class="nav-item"><i data-lucide="credit-card"></i> Billing</a>
-            <a href="/coverage" class="nav-item"><i data-lucide="globe"></i> Coverage</a>
-            <a href="/routing" class="nav-item"><i data-lucide="route"></i> Routing</a>
-            <a href="/security" class="nav-item"><i data-lucide="shield-check"></i> Security</a>
-            <a href="/lookups" class="nav-item"><i data-lucide="search"></i> Verification</a>
-            <a href="/settings" class="nav-item"><i data-lucide="settings"></i> Branding</a>
+            <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i> <span data-i18n="dashboard"></span>Dashboard</span></a>
+            <a href="/analytics" class="nav-item active"><i data-lucide="bar-chart-3"></i> <span data-i18n="analytics">Analytics</span></a>
+            <a href="/clients" class="nav-item"><i data-lucide="users"></i> <span data-i18n="clients">Clients</span></a>
+            <a href="/campaigns" class="nav-item"><i data-lucide="mail"></i> <span data-i18n="campaigns">Campaigns</span></a>
+            <a href="/billing" class="nav-item"><i data-lucide="credit-card"></i> <span data-i18n="billing">Billing</span></a>
+            <a href="/coverage" class="nav-item"><i data-lucide="globe"></i> <span data-i18n="coverage">Coverage</span></a>
+            <a href="/routing" class="nav-item"><i data-lucide="route"></i> <span data-i18n="routing">Routing</span></a>
+            <a href="/security" class="nav-item"><i data-lucide="shield-check"></i> <span data-i18n="security">Security</span></a>
+            <a href="/lookups" class="nav-item"><i data-lucide="search"></i> <span data-i18n="verification">Verification</span></a>
+            <a href="/settings" class="nav-item"><i data-lucide="settings"></i> <span data-i18n="branding">Branding</span></a>
         </nav>
     </aside>
 
     <main>
         <header style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: start;">
             <div>
-                <h1>Real-time Analytics Engine</h1>
-                <p>Advanced metrics on performance, profitability, and carrier routing.</p>
+                <h1 data-i18n="analytics_engine">Real-time Analytics Engine</h1>
+                <p data-i18n="analytics_desc">Advanced metrics on performance, profitability, and carrier routing.</p>
             </div>
-            <div
-                style="background: var(--sidebar-bg); padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.5rem; display: flex; gap: 0.5rem;">
-                <button
-                    style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Live</button>
-                <button
-                    style="background: transparent; color: var(--text-muted); border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Past
-                    24h</button>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div class="lang-switch">
+                    <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                    <button class="lang-btn" onclick="setLanguage('es')">ES</button>
+                    <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
+                </div>
+                <div
+                    style="background: var(--sidebar-bg); padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.5rem; display: flex; gap: 0.5rem;">
+                    <button
+                        style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Live</button>
+                    <button
+                        style="background: transparent; color: var(--text-muted); border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Past
+                        24h</button>
+                </div>
             </div>
         </header>
 
+        <div id="map-container"></div>
+
         <div class="stats-grid">
             <div class="glass-card stat-card">
-                <span class="label">Total Revenue</span>
+                <span class="label" data-i18n="total_revenue">Total Revenue</span>
                 <div class="value" id="revenue">$0.00</div>
                 <div class="trend trend-up"><i data-lucide="trending-up" style="width: 12px;"></i> 12% vs last period
                 </div>
             </div>
             <div class="glass-card stat-card">
-                <span class="label">Carrier Cost</span>
+                <span class="label" data-i18n="carrier_cost">Carrier Cost</span>
                 <div class="value" id="cost">$0.00</div>
                 <div class="trend" style="color: var(--text-muted);">Direct Carrier Margin</div>
             </div>
             <div class="glass-card stat-card" style="border-color: rgba(16, 185, 129, 0.3);">
-                <span class="label">Net Profit</span>
+                <span class="label" data-i18n="net_profit">Net Profit</span>
                 <div class="value" id="profit" style="color: var(--success);">$0.00</div>
                 <div class="trend trend-up" id="margin">0% margin</div>
             </div>
             <div class="glass-card stat-card">
-                <span class="label">Success Rate</span>
+                <span class="label" data-i18n="success_rate">Success Rate</span>
                 <div class="value" id="successRate">0.0%</div>
                 <div class="trend trend-up">High Reliability</div>
             </div>
@@ -291,8 +337,48 @@
         </div>
     </main>
 
+    <script src="/js/i18n.js"></script>
     <script>
         lucide.createIcons();
+        initMap();
+
+        function initMap() {
+            const map = L.map('map-container', {
+                center: [20, 0],
+                zoom: 2,
+                zoomControl: false,
+                attributionControl: false
+            });
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            // Simulate live traffic points
+            const locations = [
+                { coords: [51.505, -0.09], name: 'London' },
+                { coords: [40.7128, -74.006], name: 'New York' },
+                { coords: [35.6895, 139.6917], name: 'Tokyo' },
+                { coords: [-23.5505, -46.6333], name: 'São Paulo' },
+                { coords: [28.6139, 77.2090], name: 'New Delhi' }
+            ];
+
+            locations.forEach(loc => {
+                const marker = L.circleMarker(loc.coords, {
+                    radius: 5,
+                    fillColor: '#8b5cf6',
+                    color: '#fff',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                marker.bindTooltip(loc.name + " - Processing", {
+                    permanent: false,
+                    direction: 'top'
+                });
+            });
+        }
 
         async function loadData() {
             try {
