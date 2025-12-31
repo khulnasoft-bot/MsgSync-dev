@@ -99,6 +99,17 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Smart Caching**: 30-day indexed cache to optimize external lookup costs
 - ✅ **SS7/HLR Integration**: Direct lookup capabilities into telecom registries
 
+### AI Intelligence & NLP
+- ✅ **Sentiment Analysis**: Real-time message tone detection (Positive/Neutral/Negative)
+- ✅ **Batch Insights**: Aggregated campaign sentiment reporting
+- ✅ **Engagement Scoring**: AI-predicted quality of message content
+- ✅ **Spam Mitigation**: Intelligent content-based safety filtering
+
+### Enterprise Authentication & SSO
+- ✅ **Social Login**: Google and GitHub OAuth 2.0 integration
+- ✅ **Role-Based Access**: Granular user permissions within organizations
+- ✅ **Session Security**: JWT-based stateless authentication
+
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
 - ✅ **Interactive API Docs**: Swagger/OpenAPI 3.0 specification

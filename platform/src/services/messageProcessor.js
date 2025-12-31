@@ -40,6 +40,9 @@ async function processMessage(messageId) {
         const providerCost = providers.length > 0 ? providers[0].costPerSms : 0.005;
 
         // 5. Update message with result and financials
+        const aiService = require('./aiService');
+        const sentimentResult = await aiService.analyzeSentiment(message.content);
+
         const updatedMessage = await prisma.message.update({
             where: { id: messageId },
             data: {
@@ -49,7 +52,9 @@ async function processMessage(messageId) {
                 error: deliveryResult.error,
                 sentAt: deliveryResult.success ? new Date() : null,
                 cost: deliveryResult.success ? providerCost : 0,
-                price: deliveryResult.success ? rate.costPerSms : 0
+                price: deliveryResult.success ? rate.costPerSms : 0,
+                sentiment: sentimentResult.sentiment,
+                sentimentScore: sentimentResult.score
             }
         });
 

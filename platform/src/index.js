@@ -10,6 +10,7 @@ const rateRoutes = require('./routes/rates');
 const dynamicRoutingRoutes = require('./routes/routing');
 const lookupRoutes = require('./routes/lookups');
 const brandingRoutes = require('./routes/branding');
+const authRoutes = require('./routes/auth');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -28,6 +29,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API Documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
+// Auth & Login Route
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 // Dashboard Route
 app.get('/dashboard', (req, res) => {
@@ -87,6 +93,7 @@ app.get('/settings', (req, res) => {
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/bulk', bulkRoutes);
 app.use('/api/organizations', organizationRoutes);

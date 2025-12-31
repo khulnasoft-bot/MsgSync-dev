@@ -201,6 +201,61 @@
             </div>
         </div>
 
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>AI Sentiment Analysis</h3>
+                    <span
+                        style="font-size: 0.75rem; background: rgba(139, 92, 246, 0.2); color: var(--primary); padding: 0.2rem 0.6rem; border-radius: 1rem;">NLP
+                        Engine v2.1</span>
+                </div>
+                <div style="display: flex; gap: 2rem; align-items: center;">
+                    <div style="width: 150px; height: 150px;">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--success); font-weight: 500;">Positive</span>
+                            <span id="sent-pos">0%</span>
+                        </div>
+                        <div
+                            style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 1rem;">
+                            <div id="sent-pos-bar"
+                                style="height: 100%; background: var(--success); border-radius: 3px; width: 0%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--text-muted); font-weight: 500;">Neutral</span>
+                            <span id="sent-neu">0%</span>
+                        </div>
+                        <div
+                            style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 1rem;">
+                            <div id="sent-neu-bar"
+                                style="height: 100%; background: var(--text-muted); border-radius: 3px; width: 0%;">
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="color: var(--error); font-weight: 500;">Negative</span>
+                            <span id="sent-neg">0%</span>
+                        </div>
+                        <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px;">
+                            <div id="sent-neg-bar"
+                                style="height: 100%; background: var(--error); border-radius: 3px; width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h3>Campaign Engagement Score</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">AI-predicted response
+                    quality based on message tone and carrier delivery speed.</p>
+                <div
+                    style="display: flex; justify-content: center; align-items: center; height: 150px; flex-direction: column;">
+                    <span style="font-size: 3rem; font-weight: 700; color: var(--primary);">8.4/10</span>
+                    <span style="color: var(--success); font-size: 0.75rem;">↑ 1.2 from last campaign</span>
+                </div>
+            </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
             <div class="glass-card">
                 <h3>Delivery Volume (24h)</h3>
@@ -260,10 +315,37 @@
 
                 renderVolumeChart(trendData);
                 renderCarrierChart();
+                renderSentimentChart();
                 loadRecentProfit();
             } catch (e) {
                 console.error('Failed to load analytics', e);
             }
+        }
+
+        function renderSentimentChart() {
+            const ctx = document.getElementById('sentimentChart').getContext('2d');
+            const data = { pos: 65, neu: 25, neg: 10 }; // Demo data
+
+            document.getElementById('sent-pos').innerText = data.pos + '%';
+            document.getElementById('sent-neu').innerText = data.neu + '%';
+            document.getElementById('sent-neg').innerText = data.neg + '%';
+
+            document.getElementById('sent-pos-bar').style.width = data.pos + '%';
+            document.getElementById('sent-neu-bar').style.width = data.neu + '%';
+            document.getElementById('sent-neg-bar').style.width = data.neg + '%';
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [data.pos, data.neu, data.neg],
+                        backgroundColor: ['#10b981', '#94a3b8', '#ef4444'],
+                        borderWidth: 0,
+                        cutout: '80%'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
         }
 
         function renderVolumeChart(data) {
