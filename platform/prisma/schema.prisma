@@ -178,6 +178,20 @@ model SenderId {
   @@unique([name, organizationId])
 }
 
+model Lookup {
+  id             String   @id @default(uuid())
+  phone          String   @unique
+  isValid        Boolean  @default(true)
+  carrier        String?
+  mcc            String?  // Mobile Country Code
+  mnc            String?  // Mobile Network Code
+  type           String?  // mobile, landline, voip
+  isPorted       Boolean  @default(false)
+  isRoaming      Boolean  @default(false)
+  lastCheckedAt  DateTime @default(now())
+  createdAt      DateTime @default(now())
+}
+
 model Provider {
   id          String   @id @default(uuid())
   name        String   @unique

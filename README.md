@@ -92,6 +92,13 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Rate Limiting**: Granular MPS (Messages Per Second) throttling per API key
 - ✅ **Infrastructure Protection**: Shielding the core engine from DDoS and flooding
 
+### HLR & Number Verification (MNP)
+- ✅ **Real-time Carrier ID**: Identify current mobile operators globally
+- ✅ **Portability Tracking**: Automated detection of ported numbers
+- ✅ **Line Type Detection**: Filter Mobile vs Landline vs VoIP
+- ✅ **Smart Caching**: 30-day indexed cache to optimize external lookup costs
+- ✅ **SS7/HLR Integration**: Direct lookup capabilities into telecom registries
+
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
 - ✅ **Interactive API Docs**: Swagger/OpenAPI 3.0 specification
@@ -377,6 +384,7 @@ await client.sendMessage({
 - **[Bundle & Subscriptions](docs/bundle-management.md)**: Strategic SMS package management guide
 - **[Routing & Failover](docs/routing-failover.md)**: Intelligent provider selection guide
 - **[Security & Anti-Fraud](docs/security-anti-fraud.md)**: Comprehensive platform protection guide
+- **[Number Verification](docs/number-verification.md)**: HLR & MNP lookup integration guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
 - **[SDK Examples](examples/)**: Code samples for all SDKs
