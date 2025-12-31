@@ -389,7 +389,10 @@ await client.sendMessage({
 ## 📚 Documentation
 
 - **[Getting Started](docs/getting-started.md)**: Installation and first steps
-- **[API Reference](http://localhost:3001/docs)**: Interactive Swagger documentation
+- **[System Architecture](docs/architecture.md)**: High-level system design
+- **[Platform API Reference](docs/platform-api.md)**: Detailed API terminal/static reference
+- **[Interactive API Docs](http://localhost:3001/docs)**: Swagger/OpenAPI 3.0 specification
+- **[SDK Reference](docs/sdk-reference.md)**: Comprehensive SDK documentation
 - **[Campaign Management](docs/campaign-management.md)**: Complete campaign management guide
 - **[Reseller & Billing](docs/reseller-management.md)**: Multi-level client management guide
 - **[Bundle & Subscriptions](docs/bundle-management.md)**: Strategic SMS package management guide
@@ -398,6 +401,7 @@ await client.sendMessage({
 - **[Number Verification](docs/number-verification.md)**: HLR & MNP lookup integration guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
+- **[Troubleshooting](docs/troubleshooting.md)**: Common issues and fixes
 - **[SDK Examples](examples/)**: Code samples for all SDKs
 
 ---
