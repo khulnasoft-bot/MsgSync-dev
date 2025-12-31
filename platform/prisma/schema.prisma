@@ -19,6 +19,13 @@ model Organization {
   parentId    String?
   parent      Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
   subOrgs     Organization[] @relation("OrgHierarchy")
+  
+  // White-Label Branding
+  customDomain String?       @unique
+  logoUrl      String?
+  primaryColor String?       @default("#8b5cf6")
+  companyName  String?
+  
   apiKeys     ApiKey[]
   messages    Message[]
   campaigns   Campaign[]
@@ -82,6 +89,8 @@ model Message {
   deliveredAt   DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  cost          Decimal      @default(0.0) // Carrier cost
+  price         Decimal      @default(0.0) // Client price
   metadata      Json?
   apiKeyId      String?
   apiKey        ApiKey?      @relation(fields: [apiKeyId], references: [id])

@@ -77,6 +77,36 @@ class AnalyticsService {
             ...data
         })).sort((a, b) => a.hour - b.hour);
     }
+    async getFinancialStats(organizationId = null) {
+        const where = {
+            status: { in: ['sent', 'delivered'] }
+        };
+        if (organizationId) where.organizationId = organizationId;
+
+        const summary = await prisma.message.aggregate({
+            where,
+            _sum: {
+                cost: true,
+                price: true
+            },
+            _count: {
+                _all: true
+            }
+        });
+
+        const revenue = parseFloat(summary._sum.price || 0);
+        const cost = parseFloat(summary._sum.cost || 0);
+        const profit = revenue - cost;
+        const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(1) : 0;
+
+        return {
+            revenue,
+            cost,
+            profit,
+            margin,
+            messageCount: summary._count._all
+        };
+    }
 }
 
 module.exports = new AnalyticsService();

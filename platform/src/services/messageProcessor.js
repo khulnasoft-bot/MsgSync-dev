@@ -31,7 +31,15 @@ async function processMessage(messageId) {
         // 3. Attempt delivery with intelligent failover
         const deliveryResult = await providerService.deliverWithFailover(message);
 
-        // 4. Update message with result
+        // 4. Calculate Financials
+        const rateService = require('./rateService');
+        const rate = await rateService.lookupRate(message.recipient);
+
+        // Find the provider used to get our cost
+        const providers = await prisma.provider.findMany({ where: { name: deliveryResult.providerUsed || '' } });
+        const providerCost = providers.length > 0 ? providers[0].costPerSms : 0.005;
+
+        // 5. Update message with result and financials
         const updatedMessage = await prisma.message.update({
             where: { id: messageId },
             data: {
@@ -39,7 +47,9 @@ async function processMessage(messageId) {
                 externalId: deliveryResult.externalId,
                 provider: deliveryResult.providerUsed || 'none',
                 error: deliveryResult.error,
-                sentAt: deliveryResult.success ? new Date() : null
+                sentAt: deliveryResult.success ? new Date() : null,
+                cost: deliveryResult.success ? providerCost : 0,
+                price: deliveryResult.success ? rate.costPerSms : 0
             }
         });
 

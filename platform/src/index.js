@@ -9,6 +9,7 @@ const bundleRoutes = require('./routes/bundles');
 const rateRoutes = require('./routes/rates');
 const dynamicRoutingRoutes = require('./routes/routing');
 const lookupRoutes = require('./routes/lookups');
+const brandingRoutes = require('./routes/branding');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -31,6 +32,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 // Dashboard Route
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// Real-time Analytics Route
+app.get('/analytics', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'analytics.html'));
 });
 
 // Campaigns Route
@@ -73,6 +79,11 @@ app.get('/lookups', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'lookups.html'));
 });
 
+// Branding & Settings Route
+app.get('/settings', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'settings.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -83,6 +94,7 @@ app.use('/api/bundles', bundleRoutes);
 app.use('/api/network', rateRoutes);
 app.use('/api/routing', dynamicRoutingRoutes);
 app.use('/api/lookups', lookupRoutes);
+app.use('/api/branding', brandingRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Analytics | MsgSync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --bg: #030712;
+            --sidebar-bg: #09090b;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f9fafb;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --error: #ef4444;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        aside {
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2.5rem;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            text-align: left;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-card .trend {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .trend-up {
+            color: var(--success);
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <aside>
+        <div class="logo"><i data-lucide="zap"></i><span>MsgSync</span></div>
+        <nav>
+            <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="/analytics" class="nav-item active"><i data-lucide="bar-chart-3"></i> Analytics</a>
+            <a href="/clients" class="nav-item"><i data-lucide="users"></i> Clients</a>
+            <a href="/campaigns" class="nav-item"><i data-lucide="mail"></i> Campaigns</a>
+            <a href="/billing" class="nav-item"><i data-lucide="credit-card"></i> Billing</a>
+            <a href="/coverage" class="nav-item"><i data-lucide="globe"></i> Coverage</a>
+            <a href="/routing" class="nav-item"><i data-lucide="route"></i> Routing</a>
+            <a href="/security" class="nav-item"><i data-lucide="shield-check"></i> Security</a>
+            <a href="/lookups" class="nav-item"><i data-lucide="search"></i> Verification</a>
+            <a href="/settings" class="nav-item"><i data-lucide="settings"></i> Branding</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header style="margin-bottom: 2.5rem; display: flex; justify-content: space-between; align-items: start;">
+            <div>
+                <h1>Real-time Analytics Engine</h1>
+                <p>Advanced metrics on performance, profitability, and carrier routing.</p>
+            </div>
+            <div
+                style="background: var(--sidebar-bg); padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.5rem; display: flex; gap: 0.5rem;">
+                <button
+                    style="background: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Live</button>
+                <button
+                    style="background: transparent; color: var(--text-muted); border: none; padding: 0.4rem 0.8rem; border-radius: 0.3rem; font-size: 0.8rem; cursor: pointer;">Past
+                    24h</button>
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="glass-card stat-card">
+                <span class="label">Total Revenue</span>
+                <div class="value" id="revenue">$0.00</div>
+                <div class="trend trend-up"><i data-lucide="trending-up" style="width: 12px;"></i> 12% vs last period
+                </div>
+            </div>
+            <div class="glass-card stat-card">
+                <span class="label">Carrier Cost</span>
+                <div class="value" id="cost">$0.00</div>
+                <div class="trend" style="color: var(--text-muted);">Direct Carrier Margin</div>
+            </div>
+            <div class="glass-card stat-card" style="border-color: rgba(16, 185, 129, 0.3);">
+                <span class="label">Net Profit</span>
+                <div class="value" id="profit" style="color: var(--success);">$0.00</div>
+                <div class="trend trend-up" id="margin">0% margin</div>
+            </div>
+            <div class="glass-card stat-card">
+                <span class="label">Success Rate</span>
+                <div class="value" id="successRate">0.0%</div>
+                <div class="trend trend-up">High Reliability</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="glass-card">
+                <h3>Delivery Volume (24h)</h3>
+                <div class="chart-container">
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+            <div class="glass-card">
+                <h3>Carrier Distribution</h3>
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="carrierChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3>Recent Profitability per Message</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <thead>
+                    <tr
+                        style="text-align: left; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem;">
+                        <th style="padding: 1rem;">Recipient</th>
+                        <th>Network</th>
+                        <th>Cost</th>
+                        <th>Charged</th>
+                        <th>Profit</th>
+                    </tr>
+                </thead>
+                <tbody id="profit-table">
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        async function loadData() {
+            try {
+                const [finRes, trendRes, statsRes] = await Promise.all([
+                    fetch('/api/analytics/financials'),
+                    fetch('/api/analytics/trends'),
+                    fetch('/api/analytics/stats')
+                ]);
+
+                const financialData = (await finRes.json()).data;
+                const trendData = (await trendRes.json()).data;
+                const statsData = (await statsRes.json()).data;
+
+                // Update Stats
+                document.getElementById('revenue').innerText = '$' + financialData.revenue.toFixed(2);
+                document.getElementById('cost').innerText = '$' + financialData.cost.toFixed(2);
+                document.getElementById('profit').innerText = '$' + financialData.profit.toFixed(2);
+                document.getElementById('margin').innerText = financialData.margin + '% margin';
+                document.getElementById('successRate').innerText = statsData.successRate + '%';
+
+                renderVolumeChart(trendData);
+                renderCarrierChart();
+                loadRecentProfit();
+            } catch (e) {
+                console.error('Failed to load analytics', e);
+            }
+        }
+
+        function renderVolumeChart(data) {
+            const ctx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.hour + ':00'),
+                    datasets: [{
+                        label: 'Messages Sent',
+                        data: data.map(d => d.count),
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderCarrierChart() {
+            const ctx = document.getElementById('carrierChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Twilio', 'Nexmo', 'Carrier Direct', 'SMPP Gateway'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: ['#8b5cf6', '#a78bfa', '#c4b5fd', '#ede9fe'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Outfit' } } } }
+                }
+            });
+        }
+
+        async function loadRecentProfit() {
+            const tbody = document.getElementById('profit-table');
+            // Simulation of recent messages with financial data
+            const mockData = [
+                { phone: '+447700900123', carrier: 'Vodafone UK', cost: 0.005, price: 0.04, profit: 0.035 },
+                { phone: '+12125550198', carrier: 'AT&T US', cost: 0.004, price: 0.02, profit: 0.016 },
+                { phone: '+33612345678', carrier: 'Orange FR', cost: 0.006, price: 0.05, profit: 0.044 }
+            ];
+
+            tbody.innerHTML = mockData.map(m => `
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 1rem; font-family: monospace;">${m.phone}</td>
+                    <td>${m.carrier}</td>
+                    <td>$${m.cost.toFixed(3)}</td>
+                    <td>$${m.price.toFixed(3)}</td>
+                    <td style="color: var(--success); font-weight: 600;">+$${m.profit.toFixed(3)}</td>
+                </tr>
+            `).join('');
+        }
+
+        loadData();
+    </script>
+</body>
+
+</html>

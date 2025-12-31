@@ -29,7 +29,21 @@ async function getTrends(req, res) {
     }
 }
 
+/**
+ * Gets financial performance stats (revenue, cost, profit).
+ */
+async function getFinancials(req, res) {
+    try {
+        const organizationId = req.organization ? req.organization.id : null;
+        const financials = await analyticsService.getFinancialStats(organizationId);
+        res.status(200).json({ status: 'success', data: financials });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+}
+
 module.exports = {
     getStats,
-    getTrends
+    getTrends,
+    getFinancials
 };

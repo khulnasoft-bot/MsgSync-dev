@@ -9,5 +9,6 @@ router.use(apiLimiter);
 
 router.get('/stats', getStats);
 router.get('/trends', getTrends);
+router.get('/financials', require('../controllers/analytics').getFinancials);
 
 module.exports = router;
