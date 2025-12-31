@@ -41,12 +41,15 @@ model Organization {
   name        String
   type        String         @default("CLIENT") // ADMIN, RESELLER, CLIENT
   balance     Decimal        @default(0.0)
-  maxDailySpend Decimal      @default(100.0) // Security spend limit
+  maxDailySpend Decimal      @default(100.0)
   parentId    String?
   parent      Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
   subOrgs     Organization[] @relation("OrgHierarchy")
   
-  // White-Label Branding
+  ratePlanId  String?
+  ratePlan    RatePlan?      @relation(fields: [ratePlanId], references: [id])
+  ownedPlans  RatePlan[]     @relation("OwnedPlans")
+  
   customDomain String?       @unique
   logoUrl      String?
   primaryColor String?       @default("#8b5cf6")
@@ -63,6 +66,20 @@ model Organization {
   auditLogs   AuditLog[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+}
+
+model RatePlan {
+  id             String         @id @default(uuid())
+  name           String
+  description    String?
+  currency       String         @default("USD")
+  ownerId        String?
+  owner          Organization?  @relation("OwnedPlans", fields: [ownerId], references: [id])
+  organizations  Organization[]
+  rates          Rate[]
+  isPublic       Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Bundle {
@@ -197,11 +214,29 @@ model Campaign {
 model Rate {
   id             String   @id @default(uuid())
   country        String
-  prefix         String   @unique // e.g., "1" for US, "44" for UK
-  costPerSms     Decimal  @default(0.01)
-  status         String   @default("ACTIVE") // ACTIVE, INACTIVE
+  prefix         String   // e.g., "44"
+  mcc            String?  // Mobile Country Code
+  mnc            String?  // Mobile Network Code
+  networkName    String?  // e.g., "Vodafone"
+  pricePerSms    Decimal  @default(0.01) // Price charged to client
+  planId         String
+  plan           RatePlan @relation(fields: [planId], references: [id])
+  status         String   @default("ACTIVE")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@unique([planId, prefix, mcc, mnc])
+}
+
+model Network {
+  id             String   @id @default(uuid())
+  country        String
+  countryCode    String   // ISO alpha-2
+  prefix         String
+  mcc            String
+  mnc            String
+  networkName    String
+  createdAt      DateTime @default(now())
 }
 
 model SenderId {

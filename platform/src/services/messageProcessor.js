@@ -31,13 +31,23 @@ async function processMessage(messageId) {
         // 3. Attempt delivery with intelligent failover
         const deliveryResult = await providerService.deliverWithFailover(message);
 
-        // 4. Calculate Financials
+        // 4. Calculate Financials (Integrated with New Rate Plan Engine)
         const rateService = require('./rateService');
-        const rate = await rateService.lookupRate(message.recipient);
+        const lookupService = require('./lookupService');
 
-        // Find the provider used to get our cost
-        const providers = await prisma.provider.findMany({ where: { name: deliveryResult.providerUsed || '' } });
-        const providerCost = providers.length > 0 ? providers[0].costPerSms : 0.005;
+        // Try to get HLR/MNP info for network-level granularity
+        const lookupInfo = await lookupService.getLookupInfo(message.recipient).catch(() => null);
+
+        const rate = await rateService.lookupRateForOrganization(
+            message.organizationId,
+            message.recipient,
+            lookupInfo?.mcc,
+            lookupInfo?.mnc
+        );
+
+        // Find the provider used to get our internal cost
+        const providerUsed = await prisma.provider.findFirst({ where: { name: deliveryResult.providerUsed || '' } });
+        const providerCost = providerUsed ? providerUsed.costPerSms : 0.005;
 
         // 5. Update message with result and financials
         const aiService = require('./aiService');
@@ -52,7 +62,7 @@ async function processMessage(messageId) {
                 error: deliveryResult.error,
                 sentAt: deliveryResult.success ? new Date() : null,
                 cost: deliveryResult.success ? providerCost : 0,
-                price: deliveryResult.success ? rate.costPerSms : 0,
+                price: deliveryResult.success ? rate.pricePerSms : 0,
                 sentiment: sentimentResult.sentiment,
                 sentimentScore: sentimentResult.score
             }
