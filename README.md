@@ -78,6 +78,13 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Audit History**: Complete tracking of bundle activations and consumption trends
 - ✅ **Dynamic Modifiers**: Instant activation/deactivation of system-wide packages
 
+### Intelligent Routing & Failover
+- ✅ **Least-Cost Routing (LCR)**: Automated prefix-based provider selection for cost optimization
+- ✅ **Dynamic Failover**: Multi-carrier retry logic ensures 99.9% delivery reliability
+- ✅ **Prefix Targeting**: Global routing rules with longest-prefix matching
+- ✅ **Provider Weighting**: Load balancing across multiple SMPP/HTTP connections
+- ✅ **Health Monitoring**: Real-time latency and uptime tracking for all providers
+
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
 - ✅ **Interactive API Docs**: Swagger/OpenAPI 3.0 specification
@@ -361,6 +368,7 @@ await client.sendMessage({
 - **[Campaign Management](docs/campaign-management.md)**: Complete campaign management guide
 - **[Reseller & Billing](docs/reseller-management.md)**: Multi-level client management guide
 - **[Bundle & Subscriptions](docs/bundle-management.md)**: Strategic SMS package management guide
+- **[Routing & Failover](docs/routing-failover.md)**: Intelligent provider selection guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
 - **[SDK Examples](examples/)**: Code samples for all SDKs

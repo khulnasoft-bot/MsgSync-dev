@@ -1,30 +1,45 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+const routingService = require('./routingService');
+
 /**
  * Service to handle interaction with SMS providers.
  */
 class ProviderService {
     /**
-     * Selects the best provider for a given message.
+     * Selects a list of optimal providers for failover.
      */
-    async selectProvider(message) {
-        // Fetch active providers ordered by priority
-        const providers = await prisma.provider.findMany({
-            where: { active: true },
-            orderBy: { priority: 'asc' }
-        });
+    async selectProviders(message) {
+        return await routingService.getOptimalProviders(message.recipient, message.organizationId);
+    }
 
-        if (providers.length === 0) {
-            // Fallback to a mock provider if none configured
-            return {
-                name: 'mock-provider',
-                type: 'generic-http',
-                config: { url: 'https://api.mock-provider.com/v1/sms' }
-            };
+    /**
+     * Delivers a message with automatic failover support.
+     */
+    async deliverWithFailover(message) {
+        const providers = await this.selectProviders(message);
+        let lastError = 'No providers available';
+
+        for (const provider of providers) {
+            try {
+                const result = await this.deliver(message, provider);
+                if (result.success) {
+                    return { ...result, providerUsed: provider.name };
+                }
+                lastError = result.error || 'Unknown provider error';
+                console.warn(`Provider ${provider.name} failed for message ${message.id}: ${lastError}. Trying next...`);
+            } catch (e) {
+                lastError = e.message;
+                console.error(`Critical error with provider ${provider.name}: ${lastError}`);
+            }
         }
 
-        return providers[0];
+        return {
+            success: false,
+            externalId: null,
+            error: `All providers failed. Last error: ${lastError}`
+        };
     }
 
     /**

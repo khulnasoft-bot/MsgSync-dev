@@ -7,6 +7,7 @@ const bulkRoutes = require('./routes/bulk');
 const organizationRoutes = require('./routes/organizations');
 const bundleRoutes = require('./routes/bundles');
 const rateRoutes = require('./routes/rates');
+const dynamicRoutingRoutes = require('./routes/routing');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -56,6 +57,11 @@ app.get('/coverage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'coverage.html'));
 });
 
+// Intelligent Routing Route
+app.get('/routing', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'routing.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -64,6 +70,7 @@ app.use('/api/bulk', bulkRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/bundles', bundleRoutes);
 app.use('/api/network', rateRoutes);
+app.use('/api/routing', dynamicRoutingRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

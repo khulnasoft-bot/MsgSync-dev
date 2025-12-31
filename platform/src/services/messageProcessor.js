@@ -28,19 +28,16 @@ async function processMessage(messageId) {
             data: { status: 'sending' }
         });
 
-        // 3. Select a provider (simple logic for now)
-        const provider = await providerService.selectProvider(message);
+        // 3. Attempt delivery with intelligent failover
+        const deliveryResult = await providerService.deliverWithFailover(message);
 
-        // 4. Attempt delivery
-        const deliveryResult = await providerService.deliver(message, provider);
-
-        // 5. Update message with result
+        // 4. Update message with result
         const updatedMessage = await prisma.message.update({
             where: { id: messageId },
             data: {
                 status: deliveryResult.success ? 'sent' : 'failed',
                 externalId: deliveryResult.externalId,
-                provider: provider.name,
+                provider: deliveryResult.providerUsed || 'none',
                 error: deliveryResult.error,
                 sentAt: deliveryResult.success ? new Date() : null
             }

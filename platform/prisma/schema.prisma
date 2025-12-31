@@ -178,10 +178,29 @@ model SenderId {
 model Provider {
   id          String   @id @default(uuid())
   name        String   @unique
-  type        String   // twilio, nexmo, generic-http
+  type        String   // twilio, nexmo, generic-http, smpp, ss7
   config      Json
   active      Boolean  @default(true)
   priority    Int      @default(1)
+  weight      Int      @default(100)
+  costPerSms  Decimal  @default(0.005) // Our cost from the carrier
+  supportedPrefixes String[] // Optional: restrict to certain prefixes
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  routingRules RoutingRule[]
+}
+
+model RoutingRule {
+  id             String    @id @default(uuid())
+  name           String
+  prefix         String?   // Global if null
+  organizationId String?   // Global if null
+  providerId     String
+  provider       Provider  @relation(fields: [providerId], references: [id])
+  priority       Int       @default(1)
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([prefix, organizationId, providerId])
 }
