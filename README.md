@@ -78,6 +78,7 @@ npm run dev
 | **JS SDK** | `/sdk/js` | Official Node/JS Client |
 | **Python SDK** | `/sdk/python` | Official Python Client |
 | **Go SDK** | `/sdk/go` | Official Go Client |
+| **PHP SDK** | `/sdk/php` | Official PHP Client |
 
 ### 🔍 Explore Demos
 We have included complete end-to-end demonstrations in `examples/sdk-demo/`:
@@ -85,6 +86,7 @@ We have included complete end-to-end demonstrations in `examples/sdk-demo/`:
 - `otp-flow.js`: Complete 2FA lifecycle.
 - `bulk-campaign.js`: Variable substitution & marketing.
 - `cross-sync.js`: Aggregator-to-Platform bridge.
+- `php-demo/demo.php`: PHP SDK integration examples.
 
 ---
 
