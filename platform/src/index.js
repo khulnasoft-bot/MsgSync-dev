@@ -13,10 +13,15 @@ const app = express();
 const port = process.env.PORT || 3001; // Default to 3001 to avoid conflict with aggregator
 
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./swagger');
 
 app.use(requestLogger);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// API Documentation
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 
 // Dashboard Route
 app.get('/dashboard', (req, res) => {

@@ -341,6 +341,7 @@
             <a href="#" class="nav-item"><i data-lucide="users"></i> Contacts</a>
             <a href="#" class="nav-item"><i data-lucide="mail"></i> Campaigns</a>
             <a href="#" class="nav-item"><i data-lucide="key"></i> API Keys</a>
+            <a href="/docs" target="_blank" class="nav-item"><i data-lucide="book"></i> API Docs</a>
             <a href="#" class="nav-item"><i data-lucide="settings"></i> Settings</a>
         </nav>
         <div class="user-profile"
@@ -448,6 +449,21 @@
                         <!-- Loaded via JS -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="glass-card activity-card" style="margin-top: 2rem;">
+            <div class="card-header" style="background: rgba(0,0,0,0.4);">
+                <h2
+                    style="font-size: 0.875rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+                    Real-time Platform Logs
+                </h2>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Watch the engine in action</div>
+            </div>
+            <div id="log-console"
+                style="height: 150px; background: #000; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; overflow-y: auto; color: #a5b4fc;">
+                <div style="color: #6366f1;">[SYSTEM] MsgSync Engine v1.0 initialized...</div>
+                <div style="color: #6366f1;">[SYSTEM] Monitoring delivery queue...</div>
             </div>
         </div>
     </main>
