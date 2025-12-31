@@ -237,6 +237,7 @@
                     <tr>
                         <th>Rule Name</th>
                         <th>Target Prefix</th>
+                        <th>MCC / MNC</th>
                         <th>Preferred Provider</th>
                         <th>Priority</th>
                         <th>Status</th>
@@ -251,7 +252,7 @@
 
         <div class="glass-card">
             <h2>Provider Health & Latency</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;"
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem;"
                 id="provider-stats">
                 <!-- Mock stats -->
             </div>
@@ -259,16 +260,29 @@
     </main>
 
     <div class="modal" id="ruleModal">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 600px;">
             <h2 style="margin-bottom: 1.5rem;">Configure Routing Rule</h2>
             <form id="ruleForm">
+                <input type="hidden" id="ruleId">
                 <div class="form-group">
                     <label>Rule Name</label>
                     <input type="text" id="name" placeholder="e.g. US Least Cost" required>
                 </div>
-                <div class="form-group">
-                    <label>Prefix (Optional, empty for global)</label>
-                    <input type="text" id="prefix" placeholder="e.g. 44">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Prefix (Optional)</label>
+                        <input type="text" id="prefix" placeholder="e.g. 44">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                        <div class="form-group">
+                            <label>MCC</label>
+                            <input type="text" id="mcc" placeholder="e.g. 234">
+                        </div>
+                        <div class="form-group">
+                            <label>MNC</label>
+                            <input type="text" id="mnc" placeholder="e.g. 15">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Target Provider</label>
@@ -294,18 +308,12 @@
         async function loadData() {
             const [rulesRes, providersRes] = await Promise.all([
                 fetch('/api/routing'),
-                fetch('/api/network/rates') // Not really network rates but let's assume we have a provider list
+                fetch('/api/routing/providers')
             ]);
 
-            // Actually need a provider list
-            const provRes = await fetch('/api/routing'); // Placeholder, better to have /api/providers
-            // For now, let's fetch providers from the rules or a dummy list if empty
-            const providers = [
-                { id: 'p1', name: 'Twilio Cloud', type: 'twilio', priority: 1 },
-                { id: 'p2', name: 'Carrier SMPP', type: 'smpp', priority: 2 }
-            ];
-
             const rules = await rulesRes.json();
+            const providers = await providersRes.json();
+
             renderRules(rules);
             renderProviders(providers);
             updateProviderSelect(providers);
@@ -316,7 +324,8 @@
             list.innerHTML = rules.length ? rules.map(r => `
                 <tr>
                     <td><strong>${r.name}</strong></td>
-                    <td style="font-family: monospace;">${r.prefix ? '+' + r.prefix : 'GLOBAL'}</td>
+                    <td style="font-family: monospace;">${r.prefix ? '+' + r.prefix : '-'}</td>
+                    <td style="font-family: monospace;">${(r.mcc || r.mnc) ? (r.mcc || '???') + ' / ' + (r.mnc || '???') : '-'}</td>
                     <td>${r.provider.name} <span style="font-size: 0.7rem; opacity: 0.6">(${r.provider.type})</span></td>
                     <td><span class="badge badge-failover">P${r.priority}</span></td>
                     <td><span class="badge badge-active">${r.active ? 'ACTIVE' : 'INACTIVE'}</span></td>
@@ -324,26 +333,33 @@
                         <button class="btn" style="padding: 0.4rem; background: rgba(255,255,255,0.05);" onclick="deleteRule('${r.id}')"><i data-lucide="trash-2" style="width: 14px; color: var(--error)"></i></button>
                     </td>
                 </tr>
-            `).join('') : '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No custom routing rules defined. Using default priority.</td></tr>';
+            `).join('') : '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">No custom routing rules defined. Using default priority.</td></tr>';
             lucide.createIcons({ props: { parent: list } });
         }
 
         function renderProviders(provs) {
             const container = document.getElementById('provider-stats');
+            if (!provs.length) {
+                container.innerHTML = '<p style="color: var(--text-muted); padding: 1rem;">No providers configured.</p>';
+                return;
+            }
             container.innerHTML = provs.map(p => `
                 <div class="glass-card" style="margin-bottom: 0; padding: 1rem;">
                     <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <h4>${p.name}</h4>
+                        <div>
+                            <h4 style="margin: 0;">${p.name}</h4>
+                            <span style="font-size: 0.65rem; color: var(--text-muted);">${p.type.toUpperCase()}</span>
+                        </div>
                         <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success)"></div>
                     </div>
                     <div style="display: flex; gap: 1rem; margin-top: 1rem; font-size: 0.75rem;">
                         <div>
-                            <div style="color: var(--text-muted)">Latency</div>
-                            <div style="font-weight: 700;">143ms</div>
+                            <div style="color: var(--text-muted)">Priority</div>
+                            <div style="font-weight: 700;">${p.priority}</div>
                         </div>
                         <div>
-                            <div style="color: var(--text-muted)">Uptime</div>
-                            <div style="font-weight: 700;">99.98%</div>
+                            <div style="color: var(--text-muted)">Cost</div>
+                            <div style="font-weight: 700;">$${parseFloat(p.costPerSms).toFixed(3)}</div>
                         </div>
                     </div>
                 </div>
@@ -352,13 +368,14 @@
 
         function updateProviderSelect(provs) {
             const select = document.getElementById('providerId');
-            // Since we don't have a real provider list endpoint yet in this demo,
-            // we'll just hardcode or fetch from what we have.
-            // In a real app: fetch('/api/providers')
             select.innerHTML = provs.map(p => `<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
         }
 
-        function showModal() { document.getElementById('ruleModal').style.display = 'flex'; }
+        function showModal() {
+            document.getElementById('ruleForm').reset();
+            document.getElementById('ruleId').value = '';
+            document.getElementById('ruleModal').style.display = 'flex';
+        }
         function hideModal() { document.getElementById('ruleModal').style.display = 'none'; }
 
         document.getElementById('ruleForm').onsubmit = async (e) => {
@@ -366,12 +383,15 @@
             const data = {
                 name: document.getElementById('name').value,
                 prefix: document.getElementById('prefix').value || null,
+                mcc: document.getElementById('mcc').value || null,
+                mnc: document.getElementById('mnc').value || null,
                 providerId: document.getElementById('providerId').value,
                 priority: parseInt(document.getElementById('priority').value)
             };
 
+            const method = 'POST'; // We could implement PUT/PATCH later
             const res = await fetch('/api/routing', {
-                method: 'POST',
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
@@ -379,6 +399,9 @@
             if (res.ok) {
                 hideModal();
                 loadData();
+            } else {
+                const err = await res.json();
+                alert(err.error || 'Failed to save rule');
             }
         };
 
@@ -388,6 +411,8 @@
                 loadData();
             }
         }
+
+        loadData();
 
         loadData();
     </script>

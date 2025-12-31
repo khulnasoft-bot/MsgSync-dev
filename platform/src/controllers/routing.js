@@ -35,3 +35,17 @@ exports.deleteRule = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+exports.listProviders = async (req, res) => {
+    try {
+        const { PrismaClient } = require('@prisma/client');
+        const prisma = new PrismaClient();
+        const providers = await prisma.provider.findMany({
+            where: { active: true },
+            orderBy: { priority: 'asc' }
+        });
+        res.json(providers);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

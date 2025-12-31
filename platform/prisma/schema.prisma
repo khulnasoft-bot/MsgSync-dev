@@ -250,6 +250,8 @@ model RoutingRule {
   id             String    @id @default(uuid())
   name           String
   prefix         String?   // Global if null
+  mcc            String?   // Mobile Country Code (from HLR)
+  mnc            String?   // Mobile Network Code (from HLR)
   organizationId String?   // Global if null
   providerId     String
   provider       Provider  @relation(fields: [providerId], references: [id])
@@ -258,7 +260,7 @@ model RoutingRule {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  @@unique([prefix, organizationId, providerId])
+  @@unique([prefix, mcc, mnc, organizationId, providerId])
 }
 model HlrConfig {
   id             String   @id @default(uuid())
