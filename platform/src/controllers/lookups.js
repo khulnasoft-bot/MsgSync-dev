@@ -47,3 +47,17 @@ exports.deleteConfig = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.testConfig = async (req, res) => {
+    try {
+        const { config, phone } = req.body;
+        const result = await lookupService.performExternalHlr(config, phone);
+        if (result) {
+            res.json(result);
+        } else {
+            res.status(400).json({ error: 'HLR Test failed. Check logs for details.' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

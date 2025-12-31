@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+const axios = require('axios');
+
 class LookupService {
     /**
      * Performs an HLR/MNP lookup for a phone number.
@@ -25,6 +27,7 @@ class LookupService {
 
         if (activeConfigs.length > 0) {
             // Attempt to use the first active HLR provider (or fallback through them)
+            // For now we just use the first one, but could be enhanced with fallback logic
             result = await this.performExternalHlr(activeConfigs[0], cleanPhone);
         }
 
@@ -62,23 +65,71 @@ class LookupService {
      */
     async performExternalHlr(config, phone) {
         try {
-            // This is a placeholder for real Axel/HTTP requests. 
-            // In a production environment, you'd use axios.
             console.log(`Calling HLR provider ${config.name} for ${phone} via ${config.baseUrl}`);
 
-            // For this implementation, we simulate the success of a real call
+            const options = {
+                method: config.method,
+                url: config.baseUrl,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            // Authentication
+            if (config.apiKey) {
+                // Common patterns: Auth header or query params
+                // Here we'll support a generic Bearer token or Key if apiSecret exists
+                if (config.apiSecret) {
+                    options.headers['Authorization'] = `Basic ${Buffer.from(config.apiKey + ':' + config.apiSecret).toString('base64')}`;
+                } else {
+                    options.headers['X-API-Key'] = config.apiKey;
+                }
+            }
+
+            // Handle GET params or POST body
+            if (config.method === 'GET') {
+                options.params = { phone: phone };
+            } else {
+                options.data = { phone: phone };
+            }
+
+            const response = await axios(options);
+            const data = response.data;
+
+            // Apply mapping if provided
+            if (config.mapping) {
+                const mapping = typeof config.mapping === 'string' ? JSON.parse(config.mapping) : config.mapping;
+                return {
+                    isValid: this.getValueByPath(data, mapping.isValid) ?? true,
+                    carrier: this.getValueByPath(data, mapping.carrier) || (config.name + " Network"),
+                    mcc: this.getValueByPath(data, mapping.mcc) || "000",
+                    mnc: this.getValueByPath(data, mapping.mnc) || "00",
+                    type: this.getValueByPath(data, mapping.type) || "mobile",
+                    isPorted: !!this.getValueByPath(data, mapping.isPorted)
+                };
+            }
+
+            // Fallback if no mapping (assumes standard structure if possible)
             return {
-                isValid: true,
-                carrier: config.name + " Network",
-                mcc: "234",
-                mnc: "15",
-                type: "mobile",
-                isPorted: Math.random() > 0.8
+                isValid: data.isValid ?? true,
+                carrier: data.carrier || data.network || (config.name + " Network"),
+                mcc: data.mcc || "000",
+                mnc: data.mnc || "00",
+                type: data.type || "mobile",
+                isPorted: !!data.isPorted
             };
         } catch (error) {
-            console.error('HLR External Call Failed:', error);
+            console.error(`HLR External Call for ${config.name} Failed:`, error.message);
             return null;
         }
+    }
+
+    /**
+     * Helper to get nested value from object via path strings like 'data.user.name'
+     */
+    getValueByPath(obj, path) {
+        if (!path) return undefined;
+        return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     }
 
     /**
