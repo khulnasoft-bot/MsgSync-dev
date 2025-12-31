@@ -39,7 +39,7 @@ Enhancement suggestions are tracked as GitHub issues. Create an issue using our 
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/MsgSync.git
+git clone https://github.com/MsgSync/MsgSync.git
 
 # Navigate to the directory
 cd MsgSync

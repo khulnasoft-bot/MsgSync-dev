@@ -39,6 +39,48 @@ class ProviderService {
             return await twilioProvider.send(message);
         }
 
+        if (provider.type === 'smpp') {
+            const SMPPProvider = require('./providers/smpp');
+            const smppProvider = new SMPPProvider(provider.config);
+            try {
+                await smppProvider.connect();
+                const result = await smppProvider.sendMessage(message.recipient, message.content, message.id);
+                await smppProvider.disconnect();
+                return {
+                    success: result.success,
+                    externalId: result.externalId,
+                    error: null
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    externalId: null,
+                    error: error.message
+                };
+            }
+        }
+
+        if (provider.type === 'ss7') {
+            const SS7Provider = require('./providers/ss7');
+            const ss7Provider = new SS7Provider(provider.config);
+            try {
+                await ss7Provider.connect();
+                const result = await ss7Provider.sendMessage(message.recipient, message.content, message.id);
+                await ss7Provider.disconnect();
+                return {
+                    success: result.success,
+                    externalId: result.externalId,
+                    error: null
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    externalId: null,
+                    error: error.message
+                };
+            }
+        }
+
         if (provider.type === 'generic-http') {
             const GenericHttpProvider = require('./providers/generic-http');
             const httpProvider = new GenericHttpProvider(provider.config);
