@@ -35,7 +35,7 @@ async function processMessage(messageId) {
         const deliveryResult = await providerService.deliver(message, provider);
 
         // 5. Update message with result
-        await prisma.message.update({
+        const updatedMessage = await prisma.message.update({
             where: { id: messageId },
             data: {
                 status: deliveryResult.success ? 'sent' : 'failed',
@@ -45,6 +45,16 @@ async function processMessage(messageId) {
                 sentAt: deliveryResult.success ? new Date() : null
             }
         });
+
+        // 6. Trigger webhook notification
+        const webhookService = require('./webhookService');
+        await webhookService.triggerStatusChange(updatedMessage);
+
+        // 7. Trigger Integration Alerts (Slack/Discord)
+        if (updatedMessage.status === 'failed' && updatedMessage.metadata?.slack_webhook_url) {
+            const integrationService = require('./integrationService');
+            await integrationService.sendSlackAlert(updatedMessage.metadata.slack_webhook_url, updatedMessage);
+        }
 
         return deliveryResult;
     } catch (error) {

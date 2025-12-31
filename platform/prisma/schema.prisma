@@ -10,32 +10,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Organization {
+  id          String         @id @default(uuid())
+  name        String
+  apiKeys     ApiKey[]
+  messages    Message[]
+  campaigns   Campaign[]
+  contactLists ContactList[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
 model Message {
-  id            String   @id @default(uuid())
+  id            String       @id @default(uuid())
   recipient     String
   content       String
   provider      String?
-  status        String   @default("queued") // queued, sending, sent, delivered, failed
-  externalId    String?  @unique
+  status        String       @default("queued") // queued, sending, sent, delivered, failed
+  externalId    String?      @unique
   error         String?
-  scheduledAt   DateTime @default(now())
+  scheduledAt   DateTime     @default(now())
   sentAt        DateTime?
   deliveredAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   metadata      Json?
   apiKeyId      String?
-  apiKey        ApiKey?  @relation(fields: [apiKeyId], references: [id])
+  apiKey        ApiKey?      @relation(fields: [apiKeyId], references: [id])
+  campaignId    String?
+  campaign      Campaign?    @relation(fields: [campaignId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 }
 
 model ApiKey {
-  id          String    @id @default(uuid())
-  key         String    @unique
-  name        String
-  active      Boolean   @default(true)
-  messages    Message[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             String         @id @default(uuid())
+  key            String         @unique
+  name           String
+  active         Boolean        @default(true)
+  messages       Message[]
+  contactLists   ContactList[]
+  campaigns      Campaign[]
+  organizationId String?
+  organization   Organization?  @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Contact {
+  id        String       @id @default(uuid())
+  phone     String
+  firstName String?
+  lastName  String?
+  email     String?
+  attributes Json?       // Dynamic custom variables
+  lists     ContactList[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([phone])
+}
+
+model ContactList {
+  id             String       @id @default(uuid())
+  name           String
+  apiKeyId       String
+  apiKey         ApiKey       @relation(fields: [apiKeyId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  contacts       Contact[]
+  campaigns      Campaign[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Campaign {
+  id             String       @id @default(uuid())
+  name           String
+  template       String       // e.g. "Hello {{firstName}}, check out our sale!"
+  status         String       @default("draft") // draft, scheduled, running, completed, paused
+  scheduledAt    DateTime?
+  apiKeyId       String
+  apiKey         ApiKey       @relation(fields: [apiKeyId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  contactListId  String
+  contactList    ContactList  @relation(fields: [contactListId], references: [id])
+  messages       Message[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Provider {

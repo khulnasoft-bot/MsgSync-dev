@@ -57,6 +57,38 @@ class MsgSyncClient {
         }
     }
 
+    /**
+     * Sends an OTP (One-Time Password) to a recipient.
+     * @param {Object} params - The OTP parameters.
+     * @param {string} params.recipient - Destination phone number.
+     * @param {number} [params.length] - Length of the OTP.
+     * @param {number} [params.ttl] - Time to live in seconds.
+     * @returns {Promise<Object>} The API response.
+     */
+    async sendOTP(params) {
+        try {
+            const response = await this.client.post('/otp/send', params);
+            return response.data;
+        } catch (error) {
+            this._handleError(error);
+        }
+    }
+
+    /**
+     * Verifies an OTP code.
+     * @param {string} recipient - Destination phone number.
+     * @param {string} code - The code to verify.
+     * @returns {Promise<Object>} The API response.
+     */
+    async verifyOTP(recipient, code) {
+        try {
+            const response = await this.client.post('/otp/verify', { recipient, code });
+            return response.data;
+        } catch (error) {
+            this._handleError(error);
+        }
+    }
+
     _handleError(error) {
         if (error.response) {
             const { status, data } = error.response;

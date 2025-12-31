@@ -6,7 +6,7 @@ const messageQueue = require('../queue/messageQueue');
  * Sends a new message by adding it to the processing queue.
  */
 async function sendMessage(req, res) {
-    const { recipient, content, metadata } = req.body;
+    const { recipient, content, metadata, scheduledAt } = req.body;
 
     if (!recipient || !content) {
         return res.status(400).json({
@@ -16,6 +16,9 @@ async function sendMessage(req, res) {
     }
 
     try {
+        const scheduleDate = scheduledAt ? new Date(scheduledAt) : new Date();
+        const delay = Math.max(0, scheduleDate.getTime() - Date.now());
+
         // 1. Save message to database with 'queued' status
         const message = await prisma.message.create({
             data: {
@@ -23,17 +26,19 @@ async function sendMessage(req, res) {
                 content,
                 metadata,
                 status: 'queued',
-                apiKeyId: req.apiKey ? req.apiKey.id : null
+                scheduledAt: scheduleDate,
+                apiKeyId: req.apiKey ? req.apiKey.id : null,
+                organizationId: req.organization ? req.organization.id : null
             }
         });
 
-        // 2. Add to Bull queue for background processing
-        await messageQueue.add({ messageId: message.id });
+        // 2. Add to Bull queue for background processing with optional delay
+        await messageQueue.add({ messageId: message.id }, { delay });
 
         res.status(202).json({
             status: 'success',
             data: message,
-            message: 'Message accepted and queued for delivery'
+            message: delay > 0 ? `Message scheduled for ${scheduleDate.toISOString()}` : 'Message accepted and queued for delivery'
         });
     } catch (error) {
         console.error('Error sending message:', error);

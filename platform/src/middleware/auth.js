@@ -22,7 +22,8 @@ async function authenticate(req, res, next) {
 
     try {
         const apiKey = await prisma.apiKey.findUnique({
-            where: { key: apiKeyStr }
+            where: { key: apiKeyStr },
+            include: { organization: true }
         });
 
         if (!apiKey || !apiKey.active) {
@@ -32,8 +33,9 @@ async function authenticate(req, res, next) {
             });
         }
 
-        // Attach the API key object to the request for use in controllers
+        // Attach context to request
         req.apiKey = apiKey;
+        req.organization = apiKey.organization;
         next();
     } catch (error) {
         console.error('Auth Middleware Error:', error);

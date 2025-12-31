@@ -4,13 +4,26 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('Seeding database...');
 
+    // 0. Create a default Organization
+    const org = await prisma.organization.upsert({
+        where: { id: 'default-org-id' },
+        update: {},
+        create: {
+            id: 'default-org-id',
+            name: 'Default Organization'
+        }
+    });
+
     // 1. Create a demo API Key
     const demoKey = await prisma.apiKey.upsert({
         where: { key: 'demo-api-key' },
-        update: {},
+        update: {
+            organizationId: org.id
+        },
         create: {
             key: 'demo-api-key',
-            name: 'Demo App'
+            name: 'Demo App',
+            organizationId: org.id
         }
     });
     console.log(`Created/Ensured API Key: ${demoKey.key}`);

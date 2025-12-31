@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MsgSync Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.875rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-queued {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+        }
+
+        .badge-sent {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .badge-failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .refresh-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            display: none;
+            animation: loading 2s infinite linear;
+        }
+
+        @keyframes loading {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading"></div>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m22 2-7 20-4-9-9-4Z" />
+                    <path d="M22 2 11 13" />
+                </svg>
+                MsgSync
+            </div>
+            <button class="refresh-btn" onclick="fetchData()">Refresh Data</button>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Messages</div>
+                <div class="stat-value" id="total-count">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sent Successfully</div>
+                <div class="stat-value" id="sent-count" style="color: var(--success)">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Failed Delivery</div>
+                <div class="stat-value" id="failed-count" style="color: var(--error)">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">System Health</div>
+                <div class="stat-value" id="health-status" style="color: var(--success)">Healthy</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Recent Activity</h2>
+                <div style="font-size: 0.875rem; color: var(--text-dim)">Latest 50 messages</div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Content</th>
+                            <th>Status</th>
+                            <th>Provider</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="message-list">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-dim)">Loading data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'demo-api-key'; // In real app, this should be handled by login
+
+        async function fetchData() {
+            document.getElementById('loading').style.display = 'block';
+            try {
+                // Fetch Messages
+                const msgResponse = await fetch('/api/messages', {
+                    headers: { 'X-API-Key': API_KEY }
+                });
+                const msgResult = await msgResponse.json();
+
+                // Fetch Stats
+                const statsResponse = await fetch('/api/analytics/stats', {
+                    headers: { 'X-API-Key': API_KEY }
+                });
+                const statsResult = await statsResponse.json();
+
+                if (msgResult.status === 'success' && statsResult.status === 'success') {
+                    renderDashboard(msgResult.data, statsResult.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderDashboard(messages, stats) {
+            const tableBody = document.getElementById('message-list');
+            tableBody.innerHTML = '';
+
+            document.getElementById('total-count').textContent = stats.total;
+            document.getElementById('sent-count').textContent = stats.sent + stats.delivered;
+            document.getElementById('failed-count').textContent = stats.failed;
+
+            // Success rate indicator color
+            const healthEl = document.getElementById('health-status');
+            healthEl.textContent = `${stats.successRate}% Success`;
+            if (stats.successRate < 80) healthEl.style.color = 'var(--error)';
+            else if (stats.successRate < 95) healthEl.style.color = 'var(--warning)';
+            else healthEl.style.color = 'var(--success)';
+
+            messages.forEach(msg => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-weight: 500">${msg.recipient}</td>
+                    <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${msg.content}</td>
+                    <td><span class="badge badge-${msg.status}">${msg.status}</span></td>
+                    <td style="color: var(--text-dim)">${msg.provider || 'N/A'}</td>
+                    <td style="color: var(--text-dim)">${new Date(msg.createdAt).toLocaleString()}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Auto refresh every 30 seconds
+        setInterval(fetchData, 30000);
+        fetchData();
+    </script>
+</body>
+
+</html>

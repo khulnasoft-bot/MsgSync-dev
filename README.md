@@ -1,126 +1,99 @@
-# MsgSync
+# MsgSync 🚀
 
-> A powerful SMS platform for seamless message synchronization and delivery
+> **The Enterprise-Grade Communications Infrastructure.** Unified SMS, OTP, and Campaign Management with native multi-tenancy and real-time observability.
 
 [![CI](https://github.com/MsgSync/MsgSync/workflows/CI/badge.svg)](https://github.com/MsgSync/MsgSync/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Docker](https://img.shields.io/badge/docker-ready-blue)](docker-compose.yml)
 
-## Overview
+## 💎 Project Overview
 
-MsgSync is a comprehensive SMS platform that enables reliable message synchronization and delivery across multiple channels. Whether you're building a messaging application or need to integrate SMS functionality into your service, MsgSync provides the tools and infrastructure you need.
+MsgSync is a high-performance, polyglot communications platform designed to bridge the gap between complex external data sources and reliable message delivery. Built with a focus on **SaaS readiness**, it provides a unified API for all your messaging needs.
 
-## Features
-
-- 🚀 **Fast & Reliable** - High-performance message delivery with guaranteed reliability
-- 🔄 **Real-time Sync** - Keep messages synchronized across all devices
-- 📊 **Aggregation** - Centralized message aggregation from multiple sources
-- 🛠️ **Developer-Friendly** - Easy-to-use SDKs and comprehensive documentation
-- 🔒 **Secure** - End-to-end encryption and security best practices
-- 📈 **Scalable** - Built to handle millions of messages
-
-## Project Structure
-
-```
-MsgSync/
-├── .github/          # GitHub templates and workflows
-├── docs/             # Documentation
-├── platform/         # Core SMS platform code
-├── aggregator/       # Server aggregator code
-├── sdk/              # SDKs for developers
-├── examples/         # Integration examples
-└── README.md         # This file
-```
-
-## Quick Start
-
-### Prerequisites
-
-- Node.js 16.x or higher
-- npm or yarn
-- (Add other prerequisites as needed)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/MsgSync/MsgSync.git
-
-# Navigate to the project directory
-cd MsgSync
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Start development server
-npm run dev
-```
-
-## Documentation
-
-Comprehensive documentation is available in the [`docs/`](./docs) directory:
-
-- [Getting Started](./docs/getting-started.md)
-- [Platform API](./docs/platform-api.md)
-- [SDK Reference](./docs/sdk-reference.md)
-- [Examples](./examples)
-
-## Components
-
-### Platform
-The core SMS platform handles message routing, delivery, and management. See [`platform/`](./platform) for more details.
-
-### Aggregator
-The server aggregator consolidates messages from multiple sources. See [`aggregator/`](./aggregator) for more details.
-
-### SDK
-Developer SDKs for easy integration with MsgSync. Available for:
-- JavaScript/TypeScript
-- Python
-- Java
-- Go
-
-See [`sdk/`](./sdk) for more details.
-
-## Examples
-
-Check out the [`examples/`](./examples) directory for sample integrations and use cases.
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Community
-
-- 💬 [Discussions](https://github.com/MsgSync/MsgSync/discussions)
-- 🐛 [Issue Tracker](https://github.com/MsgSync/MsgSync/issues)
-- 📧 [Email](mailto:your-email@example.com)
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Thanks to all contributors who have helped shape MsgSync
-- Inspired by the need for reliable, open-source messaging infrastructure
-
-## Support
-
-If you find MsgSync useful, please consider:
-- ⭐ Starring the repository
-- 🐦 Sharing it with others
-- ☕ [Sponsoring development](https://github.com/sponsors/MsgSync)
+### 🏗️ Unified Core Architecture
+- **Platform**: Central delivery engine powered by Node.js, Prisma, and BullMQ.
+- **Aggregator**: Smart normalization engine for bridging Slack, Webhooks, and custom APIs.
+- **Multi-SDK**: Native, high-quality clients for **JavaScript**, **Python**, and **Go**.
 
 ---
 
-**Built with ❤️ by the MsgSync Team**
+## 🌟 Key Features
+
+### 🏢 Multi-Tenant SaaS Engine
+First-class support for **Organizations**. Every message, campaign, and API key is isolated at the database level, making it perfect for building your own white-label messaging service.
+
+### 🔐 Identity & OTP (2FA)
+Native One-Time Password lifecycle management. Securely generate, send, and verify 4-6 digit codes with built-in expiration and "one-time-use" logic.
+
+### 📢 Targeted Campaigns
+Bulk SMS with a powerful variable substitution engine. Personalize thousands of messages using `{{firstName}}` and custom `{{attributes}}` stored in the Contact Manager.
+
+### 📊 Real-time Observability
+Premium dark-mode dashboard providing live statistics on delivery success rates, volume trends, and platform health.
+
+---
+
+## 🛠️ Stack & Technology
+
+- **Backend**: Node.js / Express
+- **Persistence**: PostgreSQL / Prisma ORM
+- **Queueing**: Redis / BullMQ (Exponential backoff & retries)
+- **Integrations**: Twilio, Slack (Alerts), Generic HTTP Webhooks
+- **Deployment**: Docker / Docker Compose
+
+---
+
+## 🚀 Quick Start
+
+### One-Command Launch (Docker)
+```bash
+docker-compose up -d --build
+```
+
+### Manual Setup
+```bash
+# Install Monorepo Dependencies
+npm install
+
+# Initialize Platform (Port 3001)
+cd platform
+npx prisma migrate dev
+npm run prisma:seed
+npm run dev
+
+# Initialize Aggregator (Port 3000)
+cd ../aggregator
+npx prisma migrate dev
+npm run dev
+```
+
+---
+
+## 📚 Components & SDKs
+
+| Component | Path | Description |
+| :--- | :--- | :--- |
+| **Platform** | `/platform` | Core API & Delivery Engine |
+| **Aggregator** | `/aggregator` | Message Bridge & Normalizer |
+| **JS SDK** | `/sdk/js` | Official Node/JS Client |
+| **Python SDK** | `/sdk/python` | Official Python Client |
+| **Go SDK** | `/sdk/go` | Official Go Client |
+
+### 🔍 Explore Demos
+We have included complete end-to-end demonstrations in `examples/sdk-demo/`:
+- `basic-usage.js`: Simple 1-to-1 messaging.
+- `otp-flow.js`: Complete 2FA lifecycle.
+- `bulk-campaign.js`: Variable substitution & marketing.
+- `cross-sync.js`: Aggregator-to-Platform bridge.
+
+---
+
+## 📈 Roadmap & Future
+- [ ] Discord & MS Teams Integration Alerts.
+- [ ] AI-powered SMS template optimization.
+- [ ] Push Notification channel support.
+- [ ] Dashboard Role-Based Access Control (RBAC).
+
+---
+
+**Built with ❤️ and Agents by the MsgSync Team.**

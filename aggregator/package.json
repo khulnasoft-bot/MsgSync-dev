@@ -21,7 +21,8 @@
     "@prisma/client": "^5.10.2",
     "axios": "^1.5.0",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@msgsync/sdk": "workspace:*"
   },
   "devDependencies": {
     "jest": "^29.7.0",
