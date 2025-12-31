@@ -52,11 +52,61 @@ class MsgSyncClient:
     def list_messages(self) -> List[Dict[str, Any]]:
         """
         List recent messages.
-        
-        :return: A list of message objects
         """
         response = self._request("GET", "/messages")
         return response.get("data", [])
+
+    def send_otp(self, recipient: str, length: int = 6, ttl: int = 300) -> Dict[str, Any]:
+        """
+        Send an OTP code.
+        """
+        payload = {
+            "recipient": recipient,
+            "length": length,
+            "ttl": ttl
+        }
+        return self._request("POST", "/otp/send", json=payload)
+
+    def verify_otp(self, recipient: str, code: str) -> Dict[str, Any]:
+        """
+        Verify an OTP code.
+        """
+        payload = {
+            "recipient": recipient,
+            "code": code
+        }
+        return self._request("POST", "/otp/verify", json=payload)
+
+    def create_list(self, name: str) -> Dict[str, Any]:
+        """
+        Create a new contact list.
+        """
+        return self._request("POST", "/bulk/lists", json={"name": name})
+
+    def add_contacts(self, list_id: str, contacts: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Import contacts into a list.
+        """
+        return self._request("POST", f"/bulk/lists/{list_id}/contacts", json={"contacts": contacts})
+
+    def create_campaign(self, name: str, template: str, contact_list_id: str, scheduled_at: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Create a communication campaign.
+        """
+        payload = {
+            "name": name,
+            "template": template,
+            "contactListId": contact_list_id
+        }
+        if scheduled_at:
+            payload["scheduledAt"] = scheduled_at
+        return self._request("POST", "/bulk/campaigns", json=payload)
+
+    def start_campaign(self, campaign_id: str) -> Dict[str, Any]:
+        """
+        Trigger a campaign.
+        """
+        return self._request("POST", f"/bulk/campaigns/{campaign_id}/start")
 
     def _request(self, method: str, path: str, **kwargs) -> Dict[str, Any]:
         """

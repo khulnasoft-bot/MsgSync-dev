@@ -92,6 +92,62 @@ func (c *Client) ListMessages() ([]Message, error) {
 	return messages, nil
 }
 
+// SendOTP triggers a verification code
+func (c *Client) SendOTP(recipient string, length, ttl int) (map[string]interface{}, error) {
+	payload := map[string]interface{}{
+		"recipient": recipient,
+		"length":    length,
+		"ttl":       ttl,
+	}
+	var resp map[string]interface{}
+	err := c.request("POST", "/otp/send", payload, &resp)
+	return resp, err
+}
+
+// VerifyOTP checks a code
+func (c *Client) VerifyOTP(recipient, code string) (map[string]interface{}, error) {
+	payload := map[string]interface{}{
+		"recipient": recipient,
+		"code":      code,
+	}
+	var resp map[string]interface{}
+	err := c.request("POST", "/otp/verify", payload, &resp)
+	return resp, err
+}
+
+// CreateList creates a new contact list
+func (c *Client) CreateList(name string) (map[string]interface{}, error) {
+	var resp map[string]interface{}
+	err := c.request("POST", "/bulk/lists", map[string]string{"name": name}, &resp)
+	return resp, err
+}
+
+// AddContacts imports contacts
+func (c *Client) AddContacts(listID string, contacts []map[string]interface{}) (map[string]interface{}, error) {
+	var resp map[string]interface{}
+	err := c.request("POST", fmt.Sprintf("/bulk/lists/%s/contacts", listID), map[string]interface{}{"contacts": contacts}, &resp)
+	return resp, err
+}
+
+// CreateCampaign initializes a campaign
+func (c *Client) CreateCampaign(name, template, listID string) (map[string]interface{}, error) {
+	payload := map[string]interface{}{
+		"name":          name,
+		"template":      template,
+		"contactListId": listID,
+	}
+	var resp map[string]interface{}
+	err := c.request("POST", "/bulk/campaigns", payload, &resp)
+	return resp, err
+}
+
+// StartCampaign triggers execution
+func (c *Client) StartCampaign(campaignID string) (map[string]interface{}, error) {
+	var resp map[string]interface{}
+	err := c.request("POST", fmt.Sprintf("/bulk/campaigns/%s/start", campaignID), nil, &resp)
+	return resp, err
+}
+
 func (c *Client) request(method, path string, body interface{}, result interface{}) error {
 	url := c.BaseURL + path
 	var bodyReader io.Reader
