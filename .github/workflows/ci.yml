@@ -59,9 +59,8 @@ jobs:
         node-version: '18.x'
         cache: 'npm'
     - name: Install dependencies
-      run: |
-        cd aggregator
-        npm install
+      run: npm install
+
     - name: Run Aggregator Tests
       run: |
         cd aggregator
