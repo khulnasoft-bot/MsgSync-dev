@@ -269,6 +269,52 @@
                 </tbody>
             </table>
         </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>Invoices</h2>
+                    <button class="btn" onclick="generateInvoice()" style="padding: 0.5rem 1rem; font-size: 0.8rem;">
+                        <i data-lucide="refresh-cw"></i> Generate Current
+                    </button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Period</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoice-list">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="glass-card">
+                <h2>Billing Settings</h2>
+                <div style="margin-top: 1.5rem;">
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Billing Email</label>
+                        <input type="email" id="billingEmail"
+                            style="width: 100%; background: #030712; border: 1px solid var(--border); padding: 0.75rem; border-radius: 0.5rem; color: white; margin-top: 0.25rem;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Billing Cycle</label>
+                        <select id="billingCycle"
+                            style="width: 100%; background: #030712; border: 1px solid var(--border); padding: 0.75rem; border-radius: 0.5rem; color: white; margin-top: 0.25rem;">
+                            <option value="MONTHLY">Monthly</option>
+                            <option value="WEEKLY">Weekly</option>
+                            <option value="QUARTERLY">Quarterly</option>
+                        </select>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center;" onclick="saveSettings()">Save
+                        Settings</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -278,20 +324,24 @@
 
         async function loadData() {
             try {
-                const [reportRes, txRes, orgRes] = await Promise.all([
+                const [reportRes, txRes, orgRes, invRes] = await Promise.all([
                     fetch(`/api/organizations/${orgId}/reporting`),
                     fetch(`/api/organizations/${orgId}/transactions`),
-                    fetch(`/api/organizations/${orgId}`)
+                    fetch(`/api/organizations/${orgId}`),
+                    fetch(`/api/invoices?organizationId=${orgId}`)
                 ]);
 
                 const report = await reportRes.json();
                 const txs = await txRes.json();
                 const org = await orgRes.json();
+                const invoices = await invRes.json();
 
                 if (org) {
                     document.getElementById('orgName').innerText = `Billing: ${org.name}`;
                     document.getElementById('orgType').innerText = `${org.type} Account Reporting`;
                     document.getElementById('balanceText').innerText = `$${parseFloat(org.balance).toFixed(2)}`;
+                    document.getElementById('billingEmail').value = org.billingEmail || '';
+                    document.getElementById('billingCycle').value = org.billingCycle || 'MONTHLY';
                 }
 
                 document.getElementById('sentCount').innerText = report.stats.find(s => s.status === 'sent')?.['_count'] || 0;
@@ -299,6 +349,7 @@
 
                 renderTransactions(txs);
                 renderChart(report.stats);
+                renderInvoices(invoices);
             } catch (e) {
                 console.error(e);
             }
@@ -315,6 +366,59 @@
                     <td><span style="opacity: 0.7">${tx.status}</span></td>
                 </tr>
             `).join('');
+        }
+
+        function renderInvoices(invs) {
+            const list = document.getElementById('invoice-list');
+            list.innerHTML = invs.length ? invs.map(inv => `
+                <tr>
+                    <td style="font-weight: 500;">${inv.number}</td>
+                    <td style="font-size: 0.75rem; color: var(--text-muted);">
+                        ${new Date(inv.periodStart).toLocaleDateString()} - ${new Date(inv.periodEnd).toLocaleDateString()}
+                    </td>
+                    <td style="font-weight: 700;">$${parseFloat(inv.total).toFixed(2)}</td>
+                    <td><span style="color: ${inv.status === 'PAID' ? 'var(--success)' : 'var(--warning)'}; font-size: 0.75rem;">${inv.status}</span></td>
+                    <td style="display: flex; gap: 0.5rem;">
+                        <a href="${inv.pdfUrl}" class="action-btn" title="Download PDF"><i data-lucide="file-text" style="width: 16px;"></i></a>
+                        <a href="${inv.excelUrl}" class="action-btn" title="Download Excel"><i data-lucide="file-spreadsheet" style="width: 16px;"></i></a>
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1rem;">No invoices generated.</td></tr>';
+            lucide.createIcons({ props: { parent: list } });
+        }
+
+        async function generateInvoice() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            const end = now.toISOString();
+
+            const res = await fetch('/api/invoices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ organizationId: orgId, periodStart: start, periodEnd: end })
+            });
+
+            if (res.ok) {
+                alert('Invoice generated successfully!');
+                loadData();
+            }
+        }
+
+        async function saveSettings() {
+            const data = {
+                billingEmail: document.getElementById('billingEmail').value,
+                billingCycle: document.getElementById('billingCycle').value
+            };
+
+            const res = await fetch(`/api/organizations/${orgId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                alert('Settings saved!');
+            }
         }
 
         function renderChart(stats) {

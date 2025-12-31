@@ -12,6 +12,7 @@ const lookupRoutes = require('./routes/lookups');
 const brandingRoutes = require('./routes/branding');
 const authRoutes = require('./routes/auth');
 const auditRoutes = require('./routes/audit');
+const invoiceRoutes = require('./routes/invoices');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -109,6 +110,7 @@ app.use('/api/routing', dynamicRoutingRoutes);
 app.use('/api/lookups', lookupRoutes);
 app.use('/api/branding', brandingRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/invoices', invoiceRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

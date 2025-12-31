@@ -55,6 +55,10 @@ model Organization {
   primaryColor String?       @default("#8b5cf6")
   companyName  String?
   
+  billingEmail   String?
+  billingCycle   String         @default("MONTHLY") // WEEKLY, MONTHLY, QUARTERLY
+  invoiceFormat  String         @default("PDF")     // PDF, EXCEL, BOTH
+  
   apiKeys     ApiKey[]
   messages    Message[]
   campaigns   Campaign[]
@@ -64,8 +68,28 @@ model Organization {
   senderIds   SenderId[]
   users       User[]
   auditLogs   AuditLog[]
+  invoices    Invoice[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+}
+
+model Invoice {
+  id             String       @id @default(uuid())
+  number         String       @unique
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  amount         Decimal      @default(0.0)
+  tax            Decimal      @default(0.0)
+  total          Decimal      @default(0.0)
+  currency       String       @default("USD")
+  status         String       @default("UNPAID") // UNPAID, PAID, VOID, OVERDUE
+  dueDate        DateTime
+  periodStart    DateTime
+  periodEnd      DateTime
+  pdfUrl         String?
+  excelUrl       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model RatePlan {
