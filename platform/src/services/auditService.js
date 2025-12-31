@@ -27,8 +27,9 @@ class AuditService {
      * Retrieves audit logs for an organization.
      */
     async getLogs(organizationId, limit = 50) {
+        const filter = organizationId && organizationId !== 'ALL' ? { organizationId } : {};
         return await prisma.auditLog.findMany({
-            where: { organizationId },
+            where: filter,
             orderBy: { createdAt: 'desc' },
             take: limit
         });

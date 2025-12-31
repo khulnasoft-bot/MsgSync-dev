@@ -144,7 +144,13 @@
             <a href="/dashboard" class="nav-item"><i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="/analytics" class="nav-item"><i data-lucide="bar-chart-3"></i> Analytics</a>
             <a href="/clients" class="nav-item"><i data-lucide="users"></i> Clients</a>
+            <a href="/campaigns" class="nav-item"><i data-lucide="mail"></i> Campaigns</a>
+            <a href="/billing" class="nav-item"><i data-lucide="credit-card"></i> Billing</a>
+            <a href="/bundles" class="nav-item"><i data-lucide="package"></i> Bundles</a>
+            <a href="/coverage" class="nav-item"><i data-lucide="globe"></i> Coverage</a>
+            <a href="/routing" class="nav-item"><i data-lucide="route"></i> Routing</a>
             <a href="/security" class="nav-item"><i data-lucide="shield-check"></i> Security</a>
+            <a href="/lookups" class="nav-item"><i data-lucide="search"></i> Verification</a>
             <a href="/settings" class="nav-item"><i data-lucide="settings"></i> Branding</a>
             <a href="/audits" class="nav-item active"><i data-lucide="scroll-text"></i> Audit Logs</a>
         </nav>
@@ -158,7 +164,15 @@
 
         <div class="glass-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <h3>System Activity</h3>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <h3>System Activity</h3>
+                    <select id="log-filter" class="form-group"
+                        style="margin-bottom: 0; padding: 0.4rem; font-size: 0.8rem; width: auto;"
+                        onchange="loadLogs()">
+                        <option value="org">My Organization</option>
+                        <option value="system">System Wide (Admin)</option>
+                    </select>
+                </div>
                 <button onclick="loadLogs()" class="nav-item"
                     style="padding: 0.5rem; background: var(--border);">Refresh</button>
             </div>
@@ -184,20 +198,25 @@
 
         async function loadLogs() {
             const table = document.getElementById('audit-table');
+            const filter = document.getElementById('log-filter').value;
+            const isSystem = filter === 'system';
+
             try {
-                const res = await fetch('/api/audit');
+                const res = await fetch(`/api/audit?system=${isSystem}`, {
+                    headers: { 'X-API-Key': 'demo-api-key' }
+                });
                 const logs = await res.json();
 
-                if (logs.length === 0) {
+                if (!Array.isArray(logs) || logs.length === 0) {
                     table.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No activity recorded yet.</td></tr>';
                     return;
                 }
 
                 table.innerHTML = logs.map(log => `
                     <tr>
-                        <td><span class="badge">${log.action}</span></td>
+                        <td><span class="badge" style="${log.organizationId === 'SYSTEM' ? 'background: rgba(16, 185, 129, 0.1); color: var(--success);' : ''}">${log.action}</span></td>
                         <td>${log.entity} <br/><small style="color:var(--text-muted)">${log.entityId}</small></td>
-                        <td>System / 127.0.0.1</td>
+                        <td>${log.organizationId === 'SYSTEM' ? 'PLATFORM' : 'ORG'} / ${log.userId ? log.userId.slice(0, 8) : 'System'}</td>
                         <td>${new Date(log.createdAt).toLocaleString()}</td>
                         <td><pre>${JSON.stringify(log.metadata, null, 2)}</pre></td>
                     </tr>
