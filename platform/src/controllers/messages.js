@@ -16,6 +16,28 @@ async function sendMessage(req, res) {
     }
 
     try {
+        const securityService = require('../services/securityService');
+        const remoteIp = req.ip || req.connection.remoteAddress;
+
+        // 0. Security & Anti-Fraud Check
+        if (req.apiKey && req.organization) {
+            const securityCheck = await securityService.validateRequest(
+                req.apiKey,
+                req.organization,
+                recipient,
+                content,
+                remoteIp
+            );
+
+            if (!securityCheck.valid) {
+                return res.status(403).json({
+                    status: 'error',
+                    code: securityCheck.reason,
+                    message: `Security rejection: ${securityCheck.reason}`
+                });
+            }
+        }
+
         const scheduleDate = scheduledAt ? new Date(scheduledAt) : new Date();
         const delay = Math.max(0, scheduleDate.getTime() - Date.now());
 

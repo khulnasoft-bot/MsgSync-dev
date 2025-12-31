@@ -15,6 +15,7 @@ model Organization {
   name        String
   type        String         @default("CLIENT") // ADMIN, RESELLER, CLIENT
   balance     Decimal        @default(0.0)
+  maxDailySpend Decimal      @default(100.0) // Security spend limit
   parentId    String?
   parent      Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
   subOrgs     Organization[] @relation("OrgHierarchy")
@@ -95,6 +96,8 @@ model ApiKey {
   key            String         @unique
   name           String
   active         Boolean        @default(true)
+  allowedIps     String[]       @default([]) // IP Whitelisting
+  rateLimit      Int            @default(5)  // Messages per second
   messages       Message[]
   contactLists   ContactList[]
   campaigns      Campaign[]

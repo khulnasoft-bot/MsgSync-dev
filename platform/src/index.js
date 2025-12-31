@@ -62,6 +62,11 @@ app.get('/routing', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'routing.html'));
 });
 
+// Security & Anti-Fraud Route
+app.get('/security', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'security.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
