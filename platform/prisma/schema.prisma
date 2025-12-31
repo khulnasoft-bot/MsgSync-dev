@@ -58,6 +58,7 @@ model Organization {
   billingEmail   String?
   billingCycle   String         @default("MONTHLY") // WEEKLY, MONTHLY, QUARTERLY
   invoiceFormat  String         @default("PDF")     // PDF, EXCEL, BOTH
+  billingPolicy  String         @default("ON_SUBMISSION") // ON_ATTEMPT, ON_SUBMISSION, ON_DELIVERY
   
   apiKeys     ApiKey[]
   messages    Message[]
@@ -160,6 +161,7 @@ model Message {
   updatedAt     DateTime     @updatedAt
   cost          Decimal      @default(0.0) // Carrier cost
   price         Decimal      @default(0.0) // Client price
+  profile       String       @default("TRANSACTIONAL") // TRANSACTIONAL, PROMOTIONAL, OTP
   sentiment     String?      // positive, neutral, negative
   sentimentScore Float?      // 0.0 to 1.0
   metadata      Json?
@@ -243,13 +245,14 @@ model Rate {
   mnc            String?  // Mobile Network Code
   networkName    String?  // e.g., "Vodafone"
   pricePerSms    Decimal  @default(0.01) // Price charged to client
+  profile        String   @default("TRANSACTIONAL") // TRANSACTIONAL, PROMOTIONAL, OTP
   planId         String
   plan           RatePlan @relation(fields: [planId], references: [id])
   status         String   @default("ACTIVE")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  @@unique([planId, prefix, mcc, mnc])
+  @@unique([planId, prefix, mcc, mnc, profile])
 }
 
 model Network {

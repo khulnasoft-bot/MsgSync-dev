@@ -310,6 +310,15 @@
                             <option value="QUARTERLY">Quarterly</option>
                         </select>
                     </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="font-size: 0.8rem; color: var(--text-muted);">Billing Policy</label>
+                        <select id="billingPolicy"
+                            style="width: 100%; background: #030712; border: 1px solid var(--border); padding: 0.75rem; border-radius: 0.5rem; color: white; margin-top: 0.25rem;">
+                            <option value="ON_SUBMISSION">On Submission (Sent)</option>
+                            <option value="ON_ATTEMPT">On Attempt (Charged even if failed)</option>
+                            <option value="ON_DELIVERY">On Delivery (Requires DLR confirmation)</option>
+                        </select>
+                    </div>
                     <button class="btn" style="width: 100%; justify-content: center;" onclick="saveSettings()">Save
                         Settings</button>
                 </div>
@@ -342,6 +351,7 @@
                     document.getElementById('balanceText').innerText = `$${parseFloat(org.balance).toFixed(2)}`;
                     document.getElementById('billingEmail').value = org.billingEmail || '';
                     document.getElementById('billingCycle').value = org.billingCycle || 'MONTHLY';
+                    document.getElementById('billingPolicy').value = org.billingPolicy || 'ON_SUBMISSION';
                 }
 
                 document.getElementById('sentCount').innerText = report.stats.find(s => s.status === 'sent')?.['_count'] || 0;
@@ -407,7 +417,8 @@
         async function saveSettings() {
             const data = {
                 billingEmail: document.getElementById('billingEmail').value,
-                billingCycle: document.getElementById('billingCycle').value
+                billingCycle: document.getElementById('billingCycle').value,
+                billingPolicy: document.getElementById('billingPolicy').value
             };
 
             const res = await fetch(`/api/organizations/${orgId}`, {

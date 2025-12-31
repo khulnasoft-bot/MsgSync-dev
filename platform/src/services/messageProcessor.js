@@ -31,9 +31,17 @@ async function processMessage(messageId) {
         // 3. Attempt delivery with intelligent failover
         const deliveryResult = await providerService.deliverWithFailover(message);
 
-        // 4. Calculate Financials (Integrated with New Rate Plan Engine)
+        // 4. Calculate Financials (Multi-Policy Billing Logic)
         const rateService = require('./rateService');
         const lookupService = require('./lookupService');
+
+        const org = await prisma.organization.findUnique({
+            where: { id: message.organizationId },
+            select: { billingPolicy: true }
+        });
+
+        // Determine profile from metadata or default to TRANSACTIONAL
+        const messageProfile = message.metadata?.profile || 'TRANSACTIONAL';
 
         // Try to get HLR/MNP info for network-level granularity
         const lookupInfo = await lookupService.getLookupInfo(message.recipient).catch(() => null);
@@ -42,12 +50,24 @@ async function processMessage(messageId) {
             message.organizationId,
             message.recipient,
             lookupInfo?.mcc,
-            lookupInfo?.mnc
+            lookupInfo?.mnc,
+            messageProfile
         );
 
         // Find the provider used to get our internal cost
         const providerUsed = await prisma.provider.findFirst({ where: { name: deliveryResult.providerUsed || '' } });
         const providerCost = providerUsed ? providerUsed.costPerSms : 0.005;
+
+        // Billing Selection Logic:
+        // ON_ATTEMPT: Always charge if we tried sending
+        // ON_SUBMISSION: Only charge if provider accepted (deliveryResult.success)
+        // ON_DELIVERY: (Handled via DLR webhook, but for now defaults to submission success)
+        let finalPrice = 0;
+        if (org.billingPolicy === 'ON_ATTEMPT') {
+            finalPrice = rate.pricePerSms;
+        } else if (deliveryResult.success) {
+            finalPrice = rate.pricePerSms;
+        }
 
         // 5. Update message with result and financials
         const aiService = require('./aiService');
@@ -60,9 +80,10 @@ async function processMessage(messageId) {
                 externalId: deliveryResult.externalId,
                 provider: deliveryResult.providerUsed || 'none',
                 error: deliveryResult.error,
+                profile: messageProfile,
                 sentAt: deliveryResult.success ? new Date() : null,
                 cost: deliveryResult.success ? providerCost : 0,
-                price: deliveryResult.success ? rate.pricePerSms : 0,
+                price: finalPrice,
                 sentiment: sentimentResult.sentiment,
                 sentimentScore: sentimentResult.score
             }

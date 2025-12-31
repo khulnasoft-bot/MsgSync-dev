@@ -347,6 +347,16 @@
                         <option value="">Select a Price List...</option>
                     </select>
                 </div>
+                <div class="search-box" style="flex: 1;">
+                    <i data-lucide="tag" style="width: 18px; color: var(--primary);"></i>
+                    <select id="profile-selector" onchange="loadRatesForSelectedPlan()"
+                        style="background: none; border: none; color: white; width: 100%; outline: none; cursor: pointer;">
+                        <option value="">All Profiles</option>
+                        <option value="TRANSACTIONAL">Transactional</option>
+                        <option value="PROMOTIONAL">Promotional</option>
+                        <option value="OTP">OTP (Priority)</option>
+                    </select>
+                </div>
                 <div class="search-box">
                     <i data-lucide="search" style="width: 18px;"></i>
                     <input type="text" placeholder="Search country, prefix or MCC..." oninput="filterRates(this.value)">
@@ -360,6 +370,7 @@
                             <th>Country</th>
                             <th>Prefix</th>
                             <th>MCC/MNC</th>
+                            <th>Profile</th>
                             <th>Network</th>
                             <th>Price ($)</th>
                             <th>Status</th>
@@ -497,9 +508,11 @@
 
         async function loadRatesForSelectedPlan() {
             const planId = document.getElementById('plan-selector').value;
+            const profile = document.getElementById('profile-selector').value;
             if (!planId) return;
 
-            const res = await fetch(`/api/network/rates/${planId}`);
+            const url = `/api/network/rates/${planId}${profile ? `?profile=${profile}` : ''}`;
+            const res = await fetch(url);
             currentRates = await res.json();
             renderRates(currentRates);
         }
@@ -511,11 +524,12 @@
                     <td style="font-weight: 500;">${r.country}</td>
                     <td style="color: var(--text-muted); font-family: monospace;">+${r.prefix}</td>
                     <td style="color: var(--text-muted); font-size: 0.7rem;">${r.mcc || '--'}/${r.mnc || '--'}</td>
+                    <td><span class="badge" style="background: rgba(139, 92, 246, 0.05); color: var(--text-muted); border: 1px solid var(--border);">${r.profile}</span></td>
                     <td style="font-size: 0.8rem;">${r.networkName || 'Any/Direct'}</td>
                     <td class="price-tag">$${parseFloat(r.pricePerSms).toFixed(4)}</td>
                     <td><span class="badge badge-active">${r.status}</span></td>
                 </tr>
-            `).join('') : '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No rates found in this plan.</td></tr>';
+            `).join('') : '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">No rates found in this plan.</td></tr>';
         }
 
         function switchMainTab(tab) {

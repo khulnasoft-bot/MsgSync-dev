@@ -34,11 +34,12 @@ class RateService {
 
     async updateRate(planId, data) {
         const uniqueKey = {
-            planId_prefix_mcc_mnc: {
+            planId_prefix_mcc_mnc_profile: {
                 planId,
                 prefix: data.prefix,
                 mcc: data.mcc || '',
-                mnc: data.mnc || ''
+                mnc: data.mnc || '',
+                profile: data.profile || 'TRANSACTIONAL'
             }
         };
 
@@ -56,6 +57,7 @@ class RateService {
                 prefix: data.prefix,
                 mcc: data.mcc || '',
                 mnc: data.mnc || '',
+                profile: data.profile || 'TRANSACTIONAL',
                 networkName: data.networkName,
                 pricePerSms: data.pricePerSms,
                 status: data.status || 'ACTIVE'
@@ -67,18 +69,15 @@ class RateService {
      * Optimized batch import for large price lists
      */
     async importRates(planId, rates) {
-        // Clear existing rates for this plan or merge? 
-        // For trading, we often replace or perform a delta update.
-        // Let's do a transactional upsert loop for now, 
-        // but in high-perf trading we'd use raw SQL or bulk inserts.
         return await prisma.$transaction(
             rates.map(r => prisma.rate.upsert({
                 where: {
-                    planId_prefix_mcc_mnc: {
+                    planId_prefix_mcc_mnc_profile: {
                         planId,
                         prefix: r.prefix,
                         mcc: r.mcc || '',
-                        mnc: r.mnc || ''
+                        mnc: r.mnc || '',
+                        profile: r.profile || 'TRANSACTIONAL'
                     }
                 },
                 update: {
@@ -93,6 +92,7 @@ class RateService {
                     prefix: r.prefix,
                     mcc: r.mcc || '',
                     mnc: r.mnc || '',
+                    profile: r.profile || 'TRANSACTIONAL',
                     networkName: r.networkName,
                     pricePerSms: r.pricePerSms,
                     status: 'ACTIVE'
@@ -104,50 +104,44 @@ class RateService {
     async getRatesForPlan(planId) {
         return await prisma.rate.findMany({
             where: { planId },
-            orderBy: [{ country: 'asc' }, { prefix: 'asc' }]
+            orderBy: [{ country: 'asc' }, { prefix: 'asc' }, { profile: 'asc' }]
         });
     }
 
     /**
      * Intelligent Rate Lookup for Charging
      */
-    async lookupRateForOrganization(organizationId, phone, mcc = null, mnc = null) {
+    async lookupRateForOrganization(organizationId, phone, mcc = null, mnc = null, profile = 'TRANSACTIONAL') {
         const org = await prisma.organization.findUnique({
             where: { id: organizationId },
             select: { ratePlanId: true }
         });
 
         if (!org || !org.ratePlanId) {
-            return { country: 'Default', pricePerSms: 0.05, prefix: '0' }; // High fallback safety
+            return { country: 'Default', pricePerSms: 0.05, prefix: '0', profile }; // High fallback safety
         }
 
         const cleanPhone = phone.replace('+', '');
 
-        // Match logic:
-        // 1. Exact MCC/MNC match for the specific plan
-        // 2. Longest Prefix match for the specific plan
-        // 3. Global fallback
-
         // Note: For extreme performance, this should use a Radix Tree or Redis cache
         const rates = await prisma.rate.findMany({
-            where: { planId: org.ratePlanId, status: 'ACTIVE' },
+            where: { planId: org.ratePlanId, status: 'ACTIVE', profile: profile },
             orderBy: [
-                { pricePerSms: 'asc' } // Placeholder for selection logic
+                { pricePerSms: 'asc' }
             ]
         });
 
-        // 1. Try MCC/MNC match first if provided
+        // 1. Try MCC/MNC match first
         if (mcc && mnc) {
             const netMatch = rates.find(r => r.mcc === mcc && r.mnc === mnc);
             if (netMatch) return netMatch;
         }
 
         // 2. Prefix matching (Waterfall)
-        // Sort rates by prefix length descending to match most specific first
         const sortedRates = rates.sort((a, b) => b.prefix.length - a.prefix.length);
         const match = sortedRates.find(r => cleanPhone.startsWith(r.prefix));
 
-        return match || { country: 'Unknown', pricePerSms: 0.1, prefix: 'default' };
+        return match || { country: 'Unknown', pricePerSms: 0.1, prefix: 'default', profile };
     }
 
     // --- Sender ID Management ---
