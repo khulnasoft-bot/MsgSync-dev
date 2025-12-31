@@ -39,7 +39,15 @@ class CampaignService {
                 content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
             });
 
-            // Create message record
+            // Create message record with sender ID in metadata
+            const messageMetadata = {};
+            if (campaign.senderId) {
+                messageMetadata.senderId = campaign.senderId;
+            }
+            if (campaign.enableTracking) {
+                messageMetadata.tracking = true;
+            }
+
             const message = await prisma.message.create({
                 data: {
                     recipient: contact.phone,
@@ -47,7 +55,8 @@ class CampaignService {
                     apiKeyId: campaign.apiKeyId,
                     campaignId: campaign.id,
                     status: 'queued',
-                    scheduledAt: campaign.scheduledAt || new Date()
+                    scheduledAt: campaign.scheduledAt || new Date(),
+                    metadata: messageMetadata
                 }
             });
 
@@ -61,7 +70,10 @@ class CampaignService {
         // Update campaign status
         await prisma.campaign.update({
             where: { id: campaign.id },
-            data: { status: 'running' }
+            data: {
+                status: 'running',
+                ...(campaign.scheduledAt && new Date(campaign.scheduledAt) <= new Date() ? {} : {})
+            }
         });
     }
 

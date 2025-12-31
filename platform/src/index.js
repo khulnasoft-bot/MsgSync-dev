@@ -28,6 +28,11 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// Campaigns Route
+app.get('/campaigns', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'campaigns.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);

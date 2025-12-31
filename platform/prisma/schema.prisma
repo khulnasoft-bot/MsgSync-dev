@@ -88,8 +88,12 @@ model Campaign {
   id             String       @id @default(uuid())
   name           String
   template       String       // e.g. "Hello {{firstName}}, check out our sale!"
+  senderId       String?      // Custom sender ID or virtual number (e.g., "BRAND" or "+1234567890")
   status         String       @default("draft") // draft, scheduled, running, completed, paused
   scheduledAt    DateTime?
+  completedAt    DateTime?
+  enableTracking Boolean      @default(true)
+  enableWebhooks Boolean      @default(false)
   apiKeyId       String
   apiKey         ApiKey       @relation(fields: [apiKeyId], references: [id])
   organizationId String?

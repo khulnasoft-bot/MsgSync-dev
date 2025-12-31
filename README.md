@@ -55,10 +55,14 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Multi-Tenancy**: Organization-level data isolation
 
 ### Marketing & Campaigns
+- ✅ **Web-Based Campaign Manager**: Intuitive interface for effortless campaign management
+- ✅ **Custom Sender IDs**: Branded alphanumeric IDs or virtual phone numbers
 - ✅ **Bulk SMS Engine**: Variable substitution with `{{placeholders}}`
-- ✅ **Contact Management**: Segmented lists with custom attributes
-- ✅ **Campaign Scheduler**: Time-based delivery automation
+- ✅ **Contact Management**: Segmented lists with CSV/JSON import
+- ✅ **Campaign Scheduler**: Schedule campaigns for specific dates and times
+- ✅ **Campaign Lifecycle**: Draft, schedule, launch, pause, resume, and track
 - ✅ **Personalization**: First name, discount codes, dynamic content
+- ✅ **Real-time Analytics**: Track delivery, success rates, and engagement
 
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
@@ -340,6 +344,7 @@ await client.sendMessage({
 
 - **[Getting Started](docs/getting-started.md)**: Installation and first steps
 - **[API Reference](http://localhost:3001/docs)**: Interactive Swagger documentation
+- **[Campaign Management](docs/campaign-management.md)**: Complete campaign management guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
 - **[SDK Examples](examples/)**: Code samples for all SDKs
