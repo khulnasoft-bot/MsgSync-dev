@@ -13,12 +13,29 @@ datasource db {
 model Organization {
   id          String         @id @default(uuid())
   name        String
+  type        String         @default("CLIENT") // ADMIN, RESELLER, CLIENT
+  balance     Decimal        @default(0.0)
+  parentId    String?
+  parent      Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
+  subOrgs     Organization[] @relation("OrgHierarchy")
   apiKeys     ApiKey[]
   messages    Message[]
   campaigns   Campaign[]
   contactLists ContactList[]
+  transactions Transaction[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+}
+
+model Transaction {
+  id             String       @id @default(uuid())
+  amount         Decimal
+  type           String       // CREDIT, DEBIT
+  status         String       @default("PENDING") // PENDING, COMPLETED, FAILED
+  description    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
 }
 
 model Message {

@@ -4,6 +4,7 @@ const messageRoutes = require('./routes/messages');
 const analyticsRoutes = require('./routes/analytics');
 const otpRoutes = require('./routes/otp');
 const bulkRoutes = require('./routes/bulk');
+const organizationRoutes = require('./routes/organizations');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -33,11 +34,22 @@ app.get('/campaigns', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'campaigns.html'));
 });
 
+// Clients & Resellers Route
+app.get('/clients', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'clients.html'));
+});
+
+// Billing & Payments Route
+app.get('/billing', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'billing.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/bulk', bulkRoutes);
+app.use('/api/organizations', organizationRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
