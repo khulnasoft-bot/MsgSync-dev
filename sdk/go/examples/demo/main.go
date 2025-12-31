@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	
-	"github.com/yourusername/msgsync-sdk-go"
+	"github.com/MsgSync/msgsync-sdk-go"
 )
 
 func main() {

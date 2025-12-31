@@ -1,3 +1,3 @@
-module github.com/yourusername/msgsync-sdk-go
+module github.com/MsgSync/msgsync-sdk-go
 
 go 1.25.4
