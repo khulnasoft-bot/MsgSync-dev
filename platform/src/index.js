@@ -11,6 +11,7 @@ const dynamicRoutingRoutes = require('./routes/routing');
 const lookupRoutes = require('./routes/lookups');
 const brandingRoutes = require('./routes/branding');
 const authRoutes = require('./routes/auth');
+const auditRoutes = require('./routes/audit');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -90,6 +91,11 @@ app.get('/settings', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'settings.html'));
 });
 
+// Audit Logs Route
+app.get('/audits', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'audits.html'));
+});
+
 // API Routes
 app.use('/api/messages', messageRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -102,6 +108,7 @@ app.use('/api/network', rateRoutes);
 app.use('/api/routing', dynamicRoutingRoutes);
 app.use('/api/lookups', lookupRoutes);
 app.use('/api/branding', brandingRoutes);
+app.use('/api/audit', auditRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

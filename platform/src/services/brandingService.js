@@ -24,7 +24,7 @@ class BrandingService {
     }
 
     async updateBranding(orgId, data) {
-        return await prisma.organization.update({
+        const updated = await prisma.organization.update({
             where: { id: orgId },
             data: {
                 customDomain: data.customDomain,
@@ -33,6 +33,18 @@ class BrandingService {
                 companyName: data.companyName
             }
         });
+
+        // Audit Log
+        const auditService = require('./auditService');
+        await auditService.log({
+            action: 'UPDATE_BRANDING',
+            entity: 'Organization',
+            entityId: orgId,
+            organizationId: orgId,
+            metadata: { newValues: data }
+        });
+
+        return updated;
     }
 
     getDefaultBranding() {
