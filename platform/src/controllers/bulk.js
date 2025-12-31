@@ -68,6 +68,18 @@ async function createCampaign(req, res) {
                 }
             }
         });
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'CREATE_CAMPAIGN',
+            entity: 'Campaign',
+            entityId: campaign.id,
+            userId: req.user ? req.user.id : null,
+            organizationId: req.organization ? req.organization.id : 'SYSTEM',
+            metadata: { name: campaign.name }
+        });
+
         res.status(201).json({ status: 'success', data: campaign });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -79,6 +91,17 @@ async function startCampaign(req, res) {
     try {
         // Run in background
         campaignService.processCampaign(id).catch(err => console.error('Campaign background error:', err));
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'START_CAMPAIGN',
+            entity: 'Campaign',
+            entityId: id,
+            userId: req.user ? req.user.id : null,
+            organizationId: req.organization ? req.organization.id : 'SYSTEM'
+        });
+
         res.status(202).json({ status: 'success', message: 'Campaign execution started' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -189,7 +212,21 @@ async function deleteCampaign(req, res) {
             });
         }
 
+        const name = campaign.name;
+        const orgId = campaign.organizationId;
         await prisma.campaign.delete({ where: { id } });
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'DELETE_CAMPAIGN',
+            entity: 'Campaign',
+            entityId: id,
+            userId: req.user ? req.user.id : null,
+            organizationId: orgId || 'SYSTEM',
+            metadata: { name }
+        });
+
         res.status(200).json({ status: 'success', message: 'Campaign deleted successfully' });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });

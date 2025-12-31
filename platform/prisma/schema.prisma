@@ -260,3 +260,15 @@ model RoutingRule {
 
   @@unique([prefix, organizationId, providerId])
 }
+model HlrConfig {
+  id             String   @id @default(uuid())
+  name           String   @unique
+  baseUrl        String
+  method         String   @default("GET") // GET, POST
+  apiKey         String?
+  apiSecret      String?
+  active         Boolean  @default(true)
+  mapping        Json?    // Response mapping (e.g. { "carrier": "data.carrier_name", "ported": "data.is_ported" })
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

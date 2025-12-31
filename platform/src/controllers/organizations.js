@@ -3,6 +3,17 @@ const organizationService = require('../services/organizationService');
 exports.create = async (req, res) => {
     try {
         const org = await organizationService.createOrganization(req.body);
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'CREATE_ORGANIZATION',
+            entity: 'Organization',
+            entityId: org.id,
+            organizationId: org.id,
+            metadata: { name: org.name }
+        });
+
         res.status(201).json(org);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -33,6 +44,17 @@ exports.addBalance = async (req, res) => {
     try {
         const { amount, description } = req.body;
         const org = await organizationService.updateBalance(req.params.id, amount, 'CREDIT', description);
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'UPDATE_BALANCE',
+            entity: 'Organization',
+            entityId: req.params.id,
+            organizationId: req.params.id,
+            metadata: { amount, type: 'CREDIT', description }
+        });
+
         res.json(org);
     } catch (error) {
         res.status(400).json({ error: error.message });

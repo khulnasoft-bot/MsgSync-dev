@@ -20,3 +20,30 @@ exports.listRecent = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getConfigs = async (req, res) => {
+    try {
+        const configs = await lookupService.getConfigs();
+        res.json(configs);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.saveConfig = async (req, res) => {
+    try {
+        const config = await lookupService.saveConfig(req.body);
+        res.json(config);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.deleteConfig = async (req, res) => {
+    try {
+        await lookupService.deleteConfig(req.params.id);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

@@ -4,5 +4,8 @@ const lookupController = require('../controllers/lookups');
 
 router.get('/info', lookupController.getLookup);
 router.get('/recent', lookupController.listRecent);
+router.get('/configs', lookupController.getConfigs);
+router.post('/configs', lookupController.saveConfig);
+router.delete('/configs/:id', lookupController.deleteConfig);
 
 module.exports = router;
