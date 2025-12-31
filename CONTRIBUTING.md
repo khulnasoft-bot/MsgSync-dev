@@ -168,14 +168,14 @@ Closes #123
 
 ## Getting Help
 
-- 💬 [GitHub Discussions](https://github.com/yourusername/MsgSync/discussions)
+- 💬 [GitHub Discussions](https://github.com/MsgSync/MsgSync/discussions)
 - 📧 Email: [your-email@example.com](mailto:your-email@example.com)
 - 📚 [Documentation](./docs/)
 
 ## Recognition
 
 Contributors are recognized in:
-- The [Contributors](https://github.com/yourusername/MsgSync/graphs/contributors) page
+- The [Contributors](https://github.com/MsgSync/MsgSync/graphs/contributors) page
 - Release notes for significant contributions
 - Our community showcase
 

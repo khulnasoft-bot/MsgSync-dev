@@ -15,9 +15,9 @@ Welcome to the MsgSync documentation!
 
 ## Quick Links
 
-- [GitHub Repository](https://github.com/yourusername/MsgSync)
-- [Issue Tracker](https://github.com/yourusername/MsgSync/issues)
-- [Discussions](https://github.com/yourusername/MsgSync/discussions)
+- [GitHub Repository](https://github.com/MsgSync/MsgSync)
+- [Issue Tracker](https://github.com/MsgSync/MsgSync/issues)
+- [Discussions](https://github.com/MsgSync/MsgSync/discussions)
 
 ## Contributing to Documentation
 

@@ -2,7 +2,7 @@
 
 > A powerful SMS platform for seamless message synchronization and delivery
 
-[![CI](https://github.com/yourusername/MsgSync/workflows/CI/badge.svg)](https://github.com/yourusername/MsgSync/actions)
+[![CI](https://github.com/MsgSync/MsgSync/workflows/CI/badge.svg)](https://github.com/MsgSync/MsgSync/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -44,7 +44,7 @@ MsgSync/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/MsgSync.git
+git clone https://github.com/MsgSync/MsgSync.git
 
 # Navigate to the project directory
 cd MsgSync
@@ -101,8 +101,8 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## Community
 
-- 💬 [Discussions](https://github.com/yourusername/MsgSync/discussions)
-- 🐛 [Issue Tracker](https://github.com/yourusername/MsgSync/issues)
+- 💬 [Discussions](https://github.com/MsgSync/MsgSync/discussions)
+- 🐛 [Issue Tracker](https://github.com/MsgSync/MsgSync/issues)
 - 📧 [Email](mailto:your-email@example.com)
 
 ## License
@@ -119,7 +119,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you find MsgSync useful, please consider:
 - ⭐ Starring the repository
 - 🐦 Sharing it with others
-- ☕ [Sponsoring development](https://github.com/sponsors/yourusername)
+- ☕ [Sponsoring development](https://github.com/sponsors/MsgSync)
 
 ---
 

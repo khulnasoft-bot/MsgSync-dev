@@ -25,12 +25,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/MsgSync.git"
+    "url": "https://github.com/MsgSync/MsgSync.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/MsgSync/issues"
+    "url": "https://github.com/MsgSync/MsgSync/issues"
   },
-  "homepage": "https://github.com/yourusername/MsgSync#readme",
+  "homepage": "https://github.com/MsgSync/MsgSync#readme",
   "workspaces": [
     "platform",
     "aggregator",

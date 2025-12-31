@@ -13,7 +13,7 @@ MsgSync is a powerful messaging platform designed to synchronize and manage mess
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/MsgSync.git
+   git clone https://github.com/MsgSync/MsgSync.git
    cd MsgSync
    ```
 

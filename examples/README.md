@@ -83,8 +83,8 @@ See [Contributing Guidelines](../CONTRIBUTING.md) for details.
 ## Getting Help
 
 - 📚 [Documentation](../docs/)
-- 💬 [Discussions](https://github.com/yourusername/MsgSync/discussions)
-- 🐛 [Report Issues](https://github.com/yourusername/MsgSync/issues)
+- 💬 [Discussions](https://github.com/MsgSync/MsgSync/discussions)
+- 🐛 [Report Issues](https://github.com/MsgSync/MsgSync/issues)
 
 ## License
 

@@ -92,4 +92,4 @@ When releasing a new version, use this template:
 
 ---
 
-For more details about a specific version, see the [releases page](https://github.com/yourusername/MsgSync/releases).
+For more details about a specific version, see the [releases page](https://github.com/MsgSync/MsgSync/releases).

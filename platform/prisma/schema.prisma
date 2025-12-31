@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  recipient     String
+  content       String
+  provider      String?
+  status        String   @default("queued") // queued, sending, sent, delivered, failed
+  externalId    String?  @unique
+  error         String?
+  scheduledAt   DateTime @default(now())
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  metadata      Json?
+  apiKeyId      String?
+  apiKey        ApiKey?  @relation(fields: [apiKeyId], references: [id])
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  key         String    @unique
+  name        String
+  active      Boolean   @default(true)
+  messages    Message[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Provider {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  type        String   // twilio, nexmo, generic-http
+  config      Json
+  active      Boolean  @default(true)
+  priority    Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
