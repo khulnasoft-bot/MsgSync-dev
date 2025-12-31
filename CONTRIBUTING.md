@@ -45,7 +45,7 @@ git clone https://github.com/YOUR_USERNAME/MsgSync.git
 cd MsgSync
 
 # Add upstream remote
-git remote add upstream https://github.com/original-owner/MsgSync.git
+git remote add upstream https://github.com/MsgSync/MsgSync.git
 
 # Install dependencies
 npm install
