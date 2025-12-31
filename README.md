@@ -71,6 +71,13 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Online Payments**: Integrated support for Stripe, PayPal, and Crypto (simulated)
 - ✅ **White-Label Reporting**: Organization-specific dashboards for sub-tenants
 
+### Bundle & Package Management
+- ✅ **Automated Subscriptions**: Prepaid and post-paid SMS package assignment
+- ✅ **Granular Limits**: Define SMS quantity, validity periods, and subscription fees
+- ✅ **Traffic Rules**: Restrict bundles by SMS type (OTP/Promo) or Sender ID type
+- ✅ **Audit History**: Complete tracking of bundle activations and consumption trends
+- ✅ **Dynamic Modifiers**: Instant activation/deactivation of system-wide packages
+
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
 - ✅ **Interactive API Docs**: Swagger/OpenAPI 3.0 specification
@@ -353,6 +360,7 @@ await client.sendMessage({
 - **[API Reference](http://localhost:3001/docs)**: Interactive Swagger documentation
 - **[Campaign Management](docs/campaign-management.md)**: Complete campaign management guide
 - **[Reseller & Billing](docs/reseller-management.md)**: Multi-level client management guide
+- **[Bundle & Subscriptions](docs/bundle-management.md)**: Strategic SMS package management guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
 - **[SDK Examples](examples/)**: Code samples for all SDKs
