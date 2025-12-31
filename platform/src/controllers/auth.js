@@ -49,17 +49,72 @@ exports.ssoLogin = async (req, res) => {
             });
         }
 
-        // 3. Generate JWT
+        // 3. Security Checks
+        const securityService = require('../services/securityService');
+        const remoteIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const restriction = await securityService.checkLoginRestricted(user.organizationId, remoteIp);
+
+        if (restriction.restricted) {
+            await securityService.logSecurityEvent(user.id, user.organizationId, 'LOGIN_BLOCKED_COUNTRY', { restriction, remoteIp });
+            return res.redirect(`/login?error=ACCESS_DENIED_COUNTRY&country=${restriction.detectedCountry}`);
+        }
+
+        // 4. Check 2FA
+        if (user.twoFactorEnabled) {
+            // Generate a temporary 2FA session token
+            const tfaToken = jwt.sign(
+                { userId: user.id, type: '2FA_PENDING' },
+                process.env.JWT_SECRET || 'secret-key',
+                { expiresIn: '10m' }
+            );
+            return res.redirect(`/login-2fa?temp_token=${tfaToken}`);
+        }
+
+        // 5. Generate JWT
         const token = jwt.sign(
             { userId: user.id, email: user.email, orgId: user.organizationId },
             process.env.JWT_SECRET || 'secret-key',
             { expiresIn: '24h' }
         );
 
-        // 4. Redirect to dashboard with token (simplified for demo)
+        await securityService.logSecurityEvent(user.id, user.organizationId, 'LOGIN_SUCCESS', { remoteIp });
+
+        // 6. Redirect to dashboard with token (simplified for demo)
         res.redirect(`/dashboard?token=${token}`);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+exports.verify2FA = async (req, res) => {
+    try {
+        const { temp_token, code } = req.body;
+        const decoded = jwt.verify(temp_token, process.env.JWT_SECRET || 'secret-key');
+
+        if (decoded.type !== '2FA_PENDING') {
+            return res.status(401).json({ error: 'Invalid state' });
+        }
+
+        const securityService = require('../services/securityService');
+        const isValid = await securityService.verify2FA(decoded.userId, code);
+
+        if (!isValid) {
+            return res.status(401).json({ error: 'Invalid 2FA code' });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.userId }
+        });
+
+        const token = jwt.sign(
+            { userId: user.id, email: user.email, orgId: user.organizationId },
+            process.env.JWT_SECRET || 'secret-key',
+            { expiresIn: '24h' }
+        );
+
+        res.json({ status: 'success', token });
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid session or code' });
     }
 };
 

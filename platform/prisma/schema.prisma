@@ -19,6 +19,8 @@ model User {
   avatarUrl      String?
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
+  twoFactorEnabled Boolean    @default(false)
+  twoFactorSecret  String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -42,6 +44,7 @@ model Organization {
   type        String         @default("CLIENT") // ADMIN, RESELLER, CLIENT
   balance     Decimal        @default(0.0)
   maxDailySpend Decimal      @default(100.0)
+  allowedCountries String[]  @default([]) // ISO Country Codes
   parentId    String?
   parent      Organization?  @relation("OrgHierarchy", fields: [parentId], references: [id])
   subOrgs     Organization[] @relation("OrgHierarchy")

@@ -1,7 +1,97 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const geoip = require('geoip-lite');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
 
 class SecurityService {
+    /**
+     * Checks if a login is restricted based on organization country rules.
+     */
+    async checkLoginRestricted(organizationId, remoteIp) {
+        const organization = await prisma.organization.findUnique({
+            where: { id: organizationId },
+            select: { allowedCountries: true }
+        });
+
+        if (!organization || !organization.allowedCountries || organization.allowedCountries.length === 0) {
+            return { restricted: false };
+        }
+
+        const geo = geoip.lookup(remoteIp);
+        const country = geo ? geo.country : null;
+
+        if (!country || !organization.allowedCountries.includes(country)) {
+            return {
+                restricted: true,
+                reason: 'COUNTRY_NOT_ALLOWED',
+                detectedCountry: country || 'Unknown'
+            };
+        }
+
+        return { restricted: false };
+    }
+
+    /**
+     * Generates a 2FA secret and placeholder QR code URL.
+     */
+    async generate2FASecret(userId, email) {
+        const secret = speakeasy.generateSecret({
+            name: `MsgSync:${email}`
+        });
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: { twoFactorSecret: secret.base32 }
+        });
+
+        const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
+        return { secret: secret.base32, qrCodeUrl };
+    }
+
+    /**
+     * Verifies a 2FA token before enabling.
+     */
+    async verify2FAPreSetup(secret, token) {
+        return speakeasy.totp.verify({
+            secret,
+            encoding: 'base32',
+            token
+        });
+    }
+
+    async enable2FA(userId, secret, token) {
+        const verified = speakeasy.totp.verify({
+            secret,
+            encoding: 'base32',
+            token
+        });
+
+        if (verified) {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { twoFactorEnabled: true }
+            });
+            return true;
+        }
+        return false;
+    }
+
+    async verify2FA(userId, token) {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { twoFactorSecret: true, twoFactorEnabled: true }
+        });
+
+        if (!user || !user.twoFactorEnabled) return true;
+
+        return speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token
+        });
+    }
+
     /**
      * Checks if a message request is valid based on security rules.
      */
@@ -54,10 +144,13 @@ class SecurityService {
         return blacklist.some(term => lowerContent.includes(term));
     }
 
-    async updateOrganizationSecurity(orgId, maxDailySpend) {
+    async updateOrganizationSecurity(orgId, data) {
         return await prisma.organization.update({
             where: { id: orgId },
-            data: { maxDailySpend }
+            data: {
+                maxDailySpend: data.maxDailySpend,
+                allowedCountries: data.allowedCountries
+            }
         });
     }
 
@@ -67,6 +160,20 @@ class SecurityService {
             data: {
                 allowedIps: data.allowedIps,
                 rateLimit: data.rateLimit
+            }
+        });
+    }
+
+    async logSecurityEvent(userId, organizationId, action, metadata = {}, ipAddress = null) {
+        return await prisma.auditLog.create({
+            data: {
+                action,
+                entity: 'Security',
+                entityId: userId || organizationId,
+                userId,
+                organizationId,
+                metadata,
+                ipAddress
             }
         });
     }

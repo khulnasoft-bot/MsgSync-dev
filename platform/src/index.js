@@ -13,6 +13,7 @@ const brandingRoutes = require('./routes/branding');
 const authRoutes = require('./routes/auth');
 const auditRoutes = require('./routes/audit');
 const invoiceRoutes = require('./routes/invoices');
+const securityRoutes = require('./routes/security');
 const requestLogger = require('./middleware/logger');
 
 // Load environment variables
@@ -35,6 +36,10 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 // Auth & Login Route
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/login-2fa', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login-2fa.html'));
 });
 
 // Dashboard Route
@@ -111,6 +116,7 @@ app.use('/api/lookups', lookupRoutes);
 app.use('/api/branding', brandingRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/security', securityRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
