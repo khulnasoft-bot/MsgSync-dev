@@ -46,7 +46,10 @@ describe('Auth Middleware', () => {
 
         await authenticate(req, res, next);
 
-        expect(prisma.apiKey.findUnique).toHaveBeenCalledWith({ where: { key: 'valid-key' } });
+        expect(prisma.apiKey.findUnique).toHaveBeenCalledWith({
+            where: { key: 'valid-key' },
+            include: { organization: true }
+        });
         expect(req.apiKey).toEqual(mockApiKey);
         expect(next).toHaveBeenCalled();
     });
@@ -58,7 +61,10 @@ describe('Auth Middleware', () => {
 
         await authenticate(req, res, next);
 
-        expect(prisma.apiKey.findUnique).toHaveBeenCalledWith({ where: { key: 'valid-token' } });
+        expect(prisma.apiKey.findUnique).toHaveBeenCalledWith({
+            where: { key: 'valid-token' },
+            include: { organization: true }
+        });
         expect(req.apiKey).toEqual(mockApiKey);
         expect(next).toHaveBeenCalled();
     });
