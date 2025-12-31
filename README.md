@@ -64,6 +64,13 @@ MsgSync is a **production-ready, enterprise-grade messaging platform** designed 
 - ✅ **Personalization**: First name, discount codes, dynamic content
 - ✅ **Real-time Analytics**: Track delivery, success rates, and engagement
 
+### Multi-Level Client Management
+- ✅ **Hierarchical Console**: Multi-tier reseller and client management with breadcrumb navigation
+- ✅ **Credit Ledger**: Centralized balance management with transaction auditing
+- ✅ **Billing Portal**: Dedicated portal for invoice tracking and credit top-ups
+- ✅ **Online Payments**: Integrated support for Stripe, PayPal, and Crypto (simulated)
+- ✅ **White-Label Reporting**: Organization-specific dashboards for sub-tenants
+
 ### Observability & Operations
 - ✅ **Premium Dashboard**: Glassmorphism UI with real-time charts
 - ✅ **Interactive API Docs**: Swagger/OpenAPI 3.0 specification
@@ -345,6 +352,7 @@ await client.sendMessage({
 - **[Getting Started](docs/getting-started.md)**: Installation and first steps
 - **[API Reference](http://localhost:3001/docs)**: Interactive Swagger documentation
 - **[Campaign Management](docs/campaign-management.md)**: Complete campaign management guide
+- **[Reseller & Billing](docs/reseller-management.md)**: Multi-level client management guide
 - **[Multi-Protocol Support](docs/multi-protocol-support.md)**: SMPP, SS7, HTTP configuration
 - **[Production Deployment](docs/production-deployment.md)**: Complete deployment guide
 - **[SDK Examples](examples/)**: Code samples for all SDKs
