@@ -22,8 +22,8 @@ Enhancement suggestions are tracked as GitHub issues. Create an issue using our 
 2. **Make your changes** following our coding standards
 3. **Add tests** if you've added code that should be tested
 4. **Update documentation** if you've changed APIs
-5. **Ensure tests pass** by running `npm test`
-6. **Run linting** with `npm run lint`
+5. **Ensure tests pass** by running `pnpm test`
+6. **Run linting** with `pnpm run lint`
 7. **Submit your pull request** using our PR template
 
 ## Development Setup
@@ -31,7 +31,7 @@ Enhancement suggestions are tracked as GitHub issues. Create an issue using our 
 ### Prerequisites
 
 - Node.js 16.x or higher
-- npm or yarn
+- pnpm
 - Git
 - (Add other prerequisites)
 
@@ -48,13 +48,13 @@ cd MsgSync
 git remote add upstream https://github.com/MsgSync/MsgSync.git
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests
-npm test
+pnpm test
 
 # Start development server
-npm run dev
+pnpm run dev
 ```
 
 ## Coding Standards

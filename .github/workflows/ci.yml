@@ -25,14 +25,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
-        cache: 'npm'
+        cache: 'pnpm'
     
     - name: Install dependencies
-      run: npm install
+      run: pnpm install
       
     - name: Run Prisma migrations
       run: |
@@ -44,7 +48,7 @@ jobs:
     - name: Run Platform Tests
       run: |
         cd platform
-        npm test
+        pnpm test
       env:
         DATABASE_URL: "postgresql://postgres:password@localhost:5432/msgsync_platform_test?schema=public"
         REDIS_URL: "redis://localhost:6379"
@@ -53,18 +57,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
-        cache: 'npm'
+        cache: 'pnpm'
     - name: Install dependencies
-      run: npm install
+      run: pnpm install
 
     - name: Run Aggregator Tests
       run: |
         cd aggregator
-        npm test || echo "No tests yet"
+        pnpm test || echo "No tests yet"
 
   test-python-sdk:
     runs-on: ubuntu-latest

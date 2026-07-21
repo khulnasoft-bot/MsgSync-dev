@@ -6,7 +6,7 @@ Official SDKs for integrating MsgSync into your applications.
 
 ### JavaScript/TypeScript
 ```bash
-npm install @msgsync/sdk
+pnpm add @msgsync/sdk
 ```
 See [JavaScript SDK](./javascript/) for documentation.
 

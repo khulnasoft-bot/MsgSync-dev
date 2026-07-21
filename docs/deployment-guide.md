@@ -68,16 +68,19 @@ volumes:
 ```dockerfile
 FROM node:18-alpine
 
+RUN npm install -g pnpm@8
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install --production
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY platform/package.json ./platform/
+RUN pnpm install --frozen-lockfile --prod
 
-COPY . .
-RUN npx prisma generate
+COPY platform/ ./platform/
+RUN cd platform && npx prisma generate
 
 EXPOSE 3001
-CMD ["npm", "start"]
+CMD ["node", "platform/src/index.js"]
 ```
 
 ### Aggregator Dockerfile (`aggregator/Dockerfile`)
@@ -85,16 +88,19 @@ CMD ["npm", "start"]
 ```dockerfile
 FROM node:18-alpine
 
+RUN npm install -g pnpm@8
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install --production
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY aggregator/package.json ./aggregator/
+RUN pnpm install --frozen-lockfile --prod
 
-COPY . .
-RUN npx prisma generate
+COPY aggregator/ ./aggregator/
+RUN cd aggregator && npx prisma generate
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "aggregator/src/index.js"]
 ```
 
 ## Deployment Steps
@@ -107,7 +113,7 @@ CMD ["npm", "start"]
 2.  **Initialize Database**:
     ```bash
     docker-compose exec platform npx prisma migrate deploy
-    docker-compose exec platform npm run prisma:seed
+    docker-compose exec platform pnpm run prisma:seed
     ```
 
 3.  **Verify**:

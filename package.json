@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "dev": "node index.js",
     "start": "node index.js",
-    "build": "npm run build --workspaces",
+    "build": "pnpm -r run build",
     "format": "prettier --write \"**/*.{js,json,md}\""
   },
   "keywords": [
@@ -43,6 +43,6 @@
   },
   "engines": {
     "node": ">=16.0.0",
-    "npm": ">=8.0.0"
+    "pnpm": ">=8.0.0"
   }
 }

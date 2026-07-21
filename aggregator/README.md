@@ -26,7 +26,7 @@ aggregator/
 
 ```bash
 cd aggregator
-npm install
+pnpm install
 ```
 
 ### Configuration
@@ -43,13 +43,13 @@ AGGREGATION_INTERVAL=5000
 
 ```bash
 # Development mode
-npm run dev
+pnpm run dev
 
 # Production mode
-npm start
+pnpm start
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ## How It Works

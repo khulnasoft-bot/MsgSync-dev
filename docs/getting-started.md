@@ -5,7 +5,7 @@ MsgSync is a powerful messaging platform designed to synchronize and manage mess
 ## Prerequisites
 
 - **Node.js**: Version 16.0.0 or higher.
-- **npm**: Version 8.0.0 or higher.
+- **pnpm**: Version 8.0.0 or higher.
 - **Docker** (Optional): For running PostgreSQL and Redis containers.
 - **PostgreSQL**: Required for the aggregator database.
 
@@ -19,7 +19,7 @@ MsgSync is a powerful messaging platform designed to synchronize and manage mess
 
 2. Install dependencies for the root and workspaces:
    ```bash
-   npm install
+   pnpm install
    ```
 
 ## Modules Overview
@@ -50,7 +50,7 @@ You can start modules individually or from the root.
 To start the aggregator:
 ```bash
 cd aggregator
-npm run dev
+pnpm run dev
 ```
 
 ## Next Steps

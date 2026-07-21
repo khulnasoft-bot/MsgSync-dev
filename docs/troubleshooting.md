@@ -12,7 +12,7 @@ This guide covers common issues encountered when setting up or using MsgSync, al
 
 ### 2. Message "Queued" but never "Delivered"
 **Symptoms:** Messages appear in the dashboard as `queued` but status never updates.
-- **Worker Status**: Check if the processing workers are running (`npm run worker`).
+- **Worker Status**: Check if the processing workers are running (`pnpm run worker`).
 - **Redis Connection**: Ensure the platform can connect to Redis.
 - **Provider Balance**: Verify that your upstream provider (e.g., Twilio) has sufficient balance.
 
@@ -35,7 +35,7 @@ This guide covers common issues encountered when setting up or using MsgSync, al
 View live logs from the core platform:
 ```bash
 cd platform
-npm run logs
+pnpm run logs
 ```
 
 ### Worker Logs

@@ -4,10 +4,10 @@ The MsgSync JavaScript SDK is a lightweight, promise-based library for integrati
 
 ## Installation
 
-Install the package via npm:
+Install the package via pnpm:
 
 ```bash
-npm install @msgsync/sdk
+pnpm add @msgsync/sdk
 ```
 
 ## Initialization

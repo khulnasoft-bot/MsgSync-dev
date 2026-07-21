@@ -6,7 +6,7 @@ MsgSync provide official SDKs for several popular programming languages to make 
 
 | Language | Package Manager | Installation | Documentation |
 |----------|-----------------|--------------|---------------|
-| **JavaScript / TypeScript** | npm | `npm install @msgsync/sdk` | [Link](./js-sdk.md) |
+| **JavaScript / TypeScript** | pnpm | `pnpm add @msgsync/sdk` | [Link](./js-sdk.md) |
 | **Python** | pip | `pip install msgsync` | [Link](./python-sdk.md) |
 | **Go** | go get | `go get github.com/msgsync/go-sdk` | [Link](./go-sdk.md) |
 | **PHP** | composer | `composer require msgsync/sdk` | [Link](./php-sdk.md) |

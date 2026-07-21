@@ -1,12 +1,15 @@
 FROM node:18-alpine
 
+RUN npm install -g pnpm@8
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install --production
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY aggregator/package.json ./aggregator/
+RUN pnpm install --frozen-lockfile --prod
 
-COPY . .
-RUN npx prisma generate
+COPY aggregator/ ./aggregator/
+RUN cd aggregator && npx prisma generate
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "aggregator/src/index.js"]

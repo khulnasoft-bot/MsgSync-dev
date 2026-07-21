@@ -197,7 +197,7 @@ npx prisma generate
 npx prisma migrate dev --name add_campaign_features
 
 # 3. Start the server
-npm run dev
+pnpm run dev
 
 # 4. Access the interface
 open http://localhost:3001/campaigns

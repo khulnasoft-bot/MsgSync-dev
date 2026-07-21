@@ -26,7 +26,7 @@ platform/
 
 ```bash
 cd platform
-npm install
+pnpm install
 ```
 
 ### Configuration
@@ -43,13 +43,13 @@ PORT=3000
 
 ```bash
 # Development mode
-npm run dev
+pnpm run dev
 
 # Production mode
-npm start
+pnpm start
 
 # Run tests
-npm test
+pnpm test
 ```
 
 ## API Overview

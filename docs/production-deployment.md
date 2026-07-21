@@ -44,13 +44,13 @@ cd MsgSync
 
 # Install platform dependencies
 cd platform
-npm install
-npm run prisma:generate
+pnpm install
+pnpm run prisma:generate
 
 # Install aggregator dependencies
 cd ../aggregator
-npm install
-npm run prisma:generate
+pnpm install
+pnpm run prisma:generate
 ```
 
 ### 2. Configure Environment Variables
@@ -110,7 +110,7 @@ npx prisma migrate deploy
 
 ```bash
 cd platform
-npm run prisma:seed
+pnpm run prisma:seed
 ```
 
 ### 3. Create Production API Keys
@@ -228,7 +228,7 @@ docker-compose -f docker-compose.production.yml up -d
 
 ```bash
 # Install PM2 globally
-npm install -g pm2
+pnpm add -g pm2
 
 # Start Platform
 cd platform
@@ -350,7 +350,7 @@ curl https://api.yourdomain.com/health
 
 **Install Winston for structured logging:**
 ```bash
-npm install winston
+pnpm add winston
 ```
 
 **`platform/src/utils/logger.js`**
@@ -503,7 +503,7 @@ pg_restore -d msgsync_test /backups/latest.sql.gz
 - Monitor API response times
 
 **Monthly:**
-- Update dependencies (`npm audit fix`)
+- Update dependencies (`pnpm audit`)
 - Review and rotate API keys
 - Test disaster recovery
 - Analyze usage patterns

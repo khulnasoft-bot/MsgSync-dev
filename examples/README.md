@@ -42,7 +42,7 @@ cd examples/simple-send
 
 2. Install dependencies:
 ```bash
-npm install
+pnpm install
 ```
 
 3. Copy and configure environment variables:
@@ -53,7 +53,7 @@ cp .env.example .env
 
 4. Run the example:
 ```bash
-npm start
+pnpm start
 ```
 
 ## Example Structure

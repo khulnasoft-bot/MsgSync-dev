@@ -4,6 +4,7 @@
     "description": "MsgSync JavaScript SDK",
     "main": "src/index.js",
     "scripts": {
+        "build": "echo \"Build complete\"",
         "test": "jest"
     },
     "keywords": [

@@ -187,7 +187,7 @@ docker-compose up -d
 
 # Run database migrations
 docker-compose exec platform npx prisma migrate deploy
-docker-compose exec platform npm run prisma:seed
+docker-compose exec platform pnpm run prisma:seed
 
 # Access the dashboard
 open http://localhost:3001/dashboard
@@ -197,8 +197,7 @@ open http://localhost:3001/dashboard
 
 ```bash
 # Install dependencies
-cd platform && npm install
-cd ../aggregator && npm install
+pnpm install
 
 # Configure environment
 cp platform/.env.example platform/.env
@@ -207,11 +206,11 @@ cp platform/.env.example platform/.env
 # Run migrations
 cd platform
 npx prisma migrate dev
-npm run prisma:seed
+pnpm run prisma:seed
 
 # Start services
-npm run dev  # Platform on :3001
-cd ../aggregator && npm run dev  # Aggregator on :3000
+pnpm run dev  # Platform on :3001
+cd ../aggregator && pnpm run dev  # Aggregator on :3000
 ```
 
 ### First API Call
@@ -266,7 +265,7 @@ MsgSync supports multiple industry-standard protocols for maximum flexibility:
 
 | Language | Package | Installation |
 |----------|---------|--------------|
-| **JavaScript/Node.js** | `@msgsync/sdk` | `npm install @msgsync/sdk` |
+| **JavaScript/Node.js** | `@msgsync/sdk` | `pnpm add @msgsync/sdk` |
 | **Python** | `msgsync` | `pip install msgsync` |
 | **Go** | `msgsync` | `go get github.com/msgsync/sdk-go` |
 | **PHP** | `msgsync/sdk` | `composer require msgsync/sdk` |
@@ -481,7 +480,7 @@ git clone https://github.com/your-username/MsgSync.git
 git checkout -b feature/amazing-feature
 
 # Make changes and test
-npm test
+pnpm test
 
 # Commit and push
 git commit -m 'Add amazing feature'

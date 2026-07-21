@@ -199,7 +199,7 @@ UPDATE "Provider" SET priority = 3 WHERE type = 'generic-http';
 ```bash
 # Enable SMPP debug logs
 export SMPP_DEBUG=true
-npm run dev
+pnpm run dev
 
 # Monitor SMPP connections
 netstat -an | grep 2775

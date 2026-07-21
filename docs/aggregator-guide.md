@@ -50,7 +50,7 @@ Returns a summary of total messages aggregated, grouped by source and type.
 ### Installation
 ```bash
 cd aggregator
-npm install
+pnpm install
 ```
 
 ### Environment Variables
@@ -68,14 +68,14 @@ npx prisma migrate dev
 
 ```bash
 # Development
-npm run dev
+pnpm run dev
 
 # Production
-npm start
+pnpm start
 ```
 
 ## Testing
 
 ```bash
-npm test
+pnpm test
 ```
