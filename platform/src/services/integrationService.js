@@ -15,7 +15,7 @@ class IntegrationService {
         console.log(`Sending Slack alert for message ${message.id}...`);
 
         const payload = {
-            text: `🚨 *MsgSync Delivery Alert*`,
+            text: '🚨 *MsgSync Delivery Alert*',
             attachments: [
                 {
                     color: message.status === 'failed' ? '#ef4444' : '#22c55e',

@@ -101,10 +101,10 @@ class LookupService {
                 const mapping = typeof config.mapping === 'string' ? JSON.parse(config.mapping) : config.mapping;
                 return {
                     isValid: this.getValueByPath(data, mapping.isValid) ?? true,
-                    carrier: this.getValueByPath(data, mapping.carrier) || (config.name + " Network"),
-                    mcc: this.getValueByPath(data, mapping.mcc) || "000",
-                    mnc: this.getValueByPath(data, mapping.mnc) || "00",
-                    type: this.getValueByPath(data, mapping.type) || "mobile",
+                    carrier: this.getValueByPath(data, mapping.carrier) || (config.name + ' Network'),
+                    mcc: this.getValueByPath(data, mapping.mcc) || '000',
+                    mnc: this.getValueByPath(data, mapping.mnc) || '00',
+                    type: this.getValueByPath(data, mapping.type) || 'mobile',
                     isPorted: !!this.getValueByPath(data, mapping.isPorted)
                 };
             }
@@ -112,10 +112,10 @@ class LookupService {
             // Fallback if no mapping (assumes standard structure if possible)
             return {
                 isValid: data.isValid ?? true,
-                carrier: data.carrier || data.network || (config.name + " Network"),
-                mcc: data.mcc || "000",
-                mnc: data.mnc || "00",
-                type: data.type || "mobile",
+                carrier: data.carrier || data.network || (config.name + ' Network'),
+                mcc: data.mcc || '000',
+                mnc: data.mnc || '00',
+                type: data.type || 'mobile',
                 isPorted: !!data.isPorted
             };
         } catch (error) {

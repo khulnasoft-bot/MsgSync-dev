@@ -42,7 +42,7 @@ async function runSecurityCampaign() {
         await axios.post(`${API_BASE}/campaigns/${campaignId}/start`, {}, HEADERS);
 
         console.log('\n--- ⚠️ Security Alert Dispatched ---');
-        console.log(`- To Charlie: "Security Alert: Hi Charlie, a new login was detected... from Chrome on Mac in London, UK..."`);
+        console.log('- To Charlie: "Security Alert: Hi Charlie, a new login was detected... from Chrome on Mac in London, UK..."');
 
     } catch (error) {
         console.error('Security Alert Error:', error.response?.data || error.message);

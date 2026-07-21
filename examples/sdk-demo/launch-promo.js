@@ -36,7 +36,7 @@ async function runLaunchCampaign() {
 
         // 3. Define the Promotional Template
         // We use double braces for variable substitution implemented in campaignService.js
-        const promoTemplate = "Hi {{firstName}}! 🚀 The future is here. Your {{tier}} account now has access to the MsgSync Premium Console! Enjoy your gift of {{perk}}. Check it out: https://msgsync.com/console";
+        const promoTemplate = 'Hi {{firstName}}! 🚀 The future is here. Your {{tier}} account now has access to the MsgSync Premium Console! Enjoy your gift of {{perk}}. Check it out: https://msgsync.com/console';
 
         console.log('\n3. Creating "Console Launch" Campaign...');
         const campaignResp = await axios.post(`${API_BASE}/campaigns`, {
@@ -52,8 +52,8 @@ async function runLaunchCampaign() {
 
         console.log('\n--- 🚀 Campaign Launched Successfully ---');
         console.log('Personalized Messages Sent:');
-        console.log(`- To Alex: "Hi Alex! 🚀 The future is here. Your Platinum account now has access..."`);
-        console.log(`- To Jordan: "Hi Jordan! 🚀 The future is here. Your Gold account now has access..."`);
+        console.log('- To Alex: "Hi Alex! 🚀 The future is here. Your Platinum account now has access..."');
+        console.log('- To Jordan: "Hi Jordan! 🚀 The future is here. Your Gold account now has access..."');
 
         console.log('\nView the real-time delivery stats on your new dashboard: http://localhost:3001/dashboard');
 

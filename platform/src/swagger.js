@@ -10,13 +10,13 @@ const options = {
             contact: {
                 name: 'MsgSync Support',
                 url: 'https://msgsync.com/support'
-            },
+            }
         },
         servers: [
             {
                 url: 'http://localhost:3001/api',
-                description: 'Development server',
-            },
+                description: 'Development server'
+            }
         ],
         components: {
             securitySchemes: {
@@ -51,7 +51,7 @@ const options = {
         },
         security: [{ ApiKeyAuth: [] }]
     },
-    apis: ['./src/routes/*.js'], // Path to the API docs
+    apis: ['./src/routes/*.js'] // Path to the API docs
 };
 
 const specs = swaggerJsdoc(options);

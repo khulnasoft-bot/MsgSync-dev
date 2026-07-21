@@ -47,7 +47,7 @@ async function runHolidayCampaign() {
         await axios.post(`${API_BASE}/campaigns/${campaignId}/start`, {}, HEADERS);
 
         console.log('\n--- ❄️ Holiday Campaign Launched ---');
-        console.log(`- To Alice: "Season's Greetings Alice! ❄️ ... Use code WINTER50 for 50% OFF..."`);
+        console.log('- To Alice: "Season\'s Greetings Alice! ❄️ ... Use code WINTER50 for 50% OFF..."');
 
     } catch (error) {
         console.error('Holiday Error:', error.response?.data || error.message);

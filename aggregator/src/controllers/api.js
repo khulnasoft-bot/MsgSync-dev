@@ -39,7 +39,7 @@ async function addSource(req, res) {
 
     try {
         const newSource = await prisma.source.create({
-            data: { name, type, config },
+            data: { name, type, config }
         });
         res.status(201).json({ status: 'success', data: newSource });
     } catch (error) {
@@ -56,15 +56,15 @@ async function getAnalytics(req, res) {
         const messagesBySource = await prisma.message.groupBy({
             by: ['source'],
             _count: {
-                _all: true,
-            },
+                _all: true
+            }
         });
 
         const messagesByType = await prisma.message.groupBy({
             by: ['sourceType'],
             _count: {
-                _all: true,
-            },
+                _all: true
+            }
         });
 
         res.status(200).json({
@@ -72,8 +72,8 @@ async function getAnalytics(req, res) {
             data: {
                 totalMessages,
                 messagesBySource,
-                messagesByType,
-            },
+                messagesByType
+            }
         });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -84,5 +84,5 @@ module.exports = {
     triggerAggregation,
     getSources,
     addSource,
-    getAnalytics,
+    getAnalytics
 };

@@ -6,7 +6,7 @@ describe('Aggregator Normalization', () => {
             sid: 'SM123',
             from: '+1234567890',
             to: '+0987654321',
-            body: 'Hello from SMS',
+            body: 'Hello from SMS'
         };
 
         const normalized = normalizeMessage(rawSms, 'Twilio', 'sms');
@@ -25,7 +25,7 @@ describe('Aggregator Normalization', () => {
             from: 'sender@example.com',
             to: 'receiver@example.com',
             subject: 'Test Subject',
-            body: 'Test Body',
+            body: 'Test Body'
         };
 
         const normalized = normalizeMessage(rawEmail, 'SendGrid', 'email');
@@ -43,7 +43,7 @@ describe('Aggregator Normalization', () => {
             id: 'WH789',
             sender_id: 'user_1',
             recipient_id: 'user_2',
-            message_text: 'Hello via Webhook',
+            message_text: 'Hello via Webhook'
         };
 
         const normalized = normalizeMessage(rawWebhook, 'MyWebhook', 'webhook');

@@ -5,8 +5,8 @@ const { PrismaClient } = require('@prisma/client');
 jest.mock('@prisma/client', () => {
     const mPrisma = {
         apiKey: {
-            findUnique: jest.fn(),
-        },
+            findUnique: jest.fn()
+        }
     };
     return { PrismaClient: jest.fn(() => mPrisma) };
 });
