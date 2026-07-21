@@ -13,7 +13,7 @@ This guide explains how to deploy MsgSync using Docker and Docker Compose.
 Create a `docker-compose.yml` file in the root directory:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -33,7 +33,7 @@ services:
       - "6379:6379"
 
   platform:
-    build: 
+    build:
       context: ./platform
     environment:
       DATABASE_URL: "postgresql://msgsync:password123@postgres:5432/msgsync_platform?schema=public"
@@ -106,11 +106,13 @@ CMD ["node", "aggregator/src/index.js"]
 ## Deployment Steps
 
 1.  **Build and Start**:
+
     ```bash
     docker-compose up -d --build
     ```
 
 2.  **Initialize Database**:
+
     ```bash
     docker-compose exec platform npx prisma migrate deploy
     docker-compose exec platform pnpm run prisma:seed
@@ -119,4 +121,7 @@ CMD ["node", "aggregator/src/index.js"]
 3.  **Verify**:
     - Platform API: `http://localhost:3001/health`
     - Aggregator API: `http://localhost:3000/health`
+
+```
+
 ```

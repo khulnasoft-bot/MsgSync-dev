@@ -101,17 +101,17 @@ async function sendMessage(to, message, options = {}) {
 - Follow the Arrange-Act-Assert pattern
 
 ```javascript
-describe('MessageHandler', () => {
-  it('should send a message successfully', async () => {
+describe("MessageHandler", () => {
+  it("should send a message successfully", async () => {
     // Arrange
     const handler = new MessageHandler();
-    const message = { to: '+1234567890', body: 'Test' };
-    
+    const message = { to: "+1234567890", body: "Test" };
+
     // Act
     const result = await handler.send(message);
-    
+
     // Assert
-    expect(result.status).toBe('sent');
+    expect(result.status).toBe("sent");
   });
 });
 ```
@@ -134,6 +134,7 @@ describe('MessageHandler', () => {
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -143,6 +144,7 @@ describe('MessageHandler', () => {
 - `chore`: Maintenance tasks
 
 **Example:**
+
 ```
 feat(platform): add retry logic for failed messages
 
@@ -175,6 +177,7 @@ Closes #123
 ## Recognition
 
 Contributors are recognized in:
+
 - The [Contributors](https://github.com/MsgSync/MsgSync/graphs/contributors) page
 - Release notes for significant contributions
 - Our community showcase

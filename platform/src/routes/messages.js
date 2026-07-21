@@ -1,14 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
-    sendMessage,
-    getMessageStatus,
-    listMessages,
-    cancelMessage
-} = require('../controllers/messages');
+  sendMessage,
+  getMessageStatus,
+  listMessages,
+  cancelMessage,
+} = require("../controllers/messages");
 
-const authenticate = require('../middleware/auth');
-const { apiLimiter, messageSendLimiter } = require('../middleware/rateLimiter');
+const authenticate = require("../middleware/auth");
+const { apiLimiter, messageSendLimiter } = require("../middleware/rateLimiter");
 
 router.use(authenticate);
 router.use(apiLimiter);
@@ -40,8 +40,8 @@ router.use(apiLimiter);
  *       200:
  *         description: List of messages
  */
-router.post('/', messageSendLimiter, sendMessage);
-router.get('/', listMessages);
+router.post("/", messageSendLimiter, sendMessage);
+router.get("/", listMessages);
 /**
  * @openapi
  * /messages/{id}:
@@ -57,7 +57,7 @@ router.get('/', listMessages);
  *       200:
  *         description: Message status object
  */
-router.get('/:id', getMessageStatus);
-router.delete('/:id', cancelMessage);
+router.get("/:id", getMessageStatus);
+router.delete("/:id", cancelMessage);
 
 module.exports = router;

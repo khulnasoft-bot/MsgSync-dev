@@ -12,6 +12,7 @@ MsgSync is a powerful messaging platform designed to synchronize and manage mess
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/MsgSync/MsgSync.git
    cd MsgSync
@@ -31,6 +32,7 @@ MsgSync is a powerful messaging platform designed to synchronize and manage mess
 ## Initial Setup
 
 ### 1. Configure the Aggregator
+
 The aggregator requires a database connection.
 
 ```bash
@@ -40,14 +42,17 @@ cp .env.example .env
 ```
 
 ### 2. Run Database Migrations
+
 ```bash
 npx prisma migrate dev
 ```
 
 ### 3. Start Development Servers
+
 You can start modules individually or from the root.
 
 To start the aggregator:
+
 ```bash
 cd aggregator
 pnpm run dev

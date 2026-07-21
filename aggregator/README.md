@@ -55,6 +55,7 @@ pnpm test
 ## How It Works
 
 The aggregator:
+
 1. Listens for messages from configured sources
 2. Normalizes message data to a standard format
 3. Stores messages in the central database

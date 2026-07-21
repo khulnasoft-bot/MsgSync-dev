@@ -66,6 +66,7 @@ For detailed API documentation, see [Platform API docs](../docs/platform-api.md)
 ## Architecture
 
 The platform is built with:
+
 - Node.js and Express
 - Redis for queuing
 - PostgreSQL for persistence
