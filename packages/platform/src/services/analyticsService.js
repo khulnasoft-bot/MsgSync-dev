@@ -83,6 +83,28 @@ class AnalyticsService {
             }))
             .sort((a, b) => a.hour - b.hour);
     }
+    /**
+   * Gets message volume by provider.
+   */
+    async getVolumeByProvider(apiKeyId = null, organizationId = null) {
+        const where = {};
+        if (apiKeyId) where.apiKeyId = apiKeyId;
+        if (organizationId) where.organizationId = organizationId;
+
+        const volumeByProvider = await prisma.message.groupBy({
+            by: ['provider'],
+            where,
+            _count: {
+                _all: true
+            }
+        });
+
+        return volumeByProvider.map(item => ({
+            provider: item.provider || 'unknown',
+            count: item._count._all
+        }));
+    }
+
     async getFinancialStats(organizationId = null) {
         const where = {
             status: { in: ['sent', 'delivered'] }

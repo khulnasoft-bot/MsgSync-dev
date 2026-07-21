@@ -36,6 +36,23 @@ async function getTrends(req, res) {
 }
 
 /**
+ * Gets message volume by provider.
+ */
+async function getVolumeByProvider(req, res) {
+    try {
+        const apiKeyId = req.apiKey ? req.apiKey.id : null;
+        const organizationId = req.organization ? req.organization.id : null;
+        const data = await analyticsService.getVolumeByProvider(
+            apiKeyId,
+            organizationId
+        );
+        res.status(200).json({ status: 'success', data });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+}
+
+/**
  * Gets financial performance stats (revenue, cost, profit).
  */
 async function getFinancials(req, res) {

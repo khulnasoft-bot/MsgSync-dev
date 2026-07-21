@@ -6,6 +6,7 @@ const {
     getFinancials,
     getReports,
     getLiveTraffic,
+    getVolumeByProvider,
     getAlerts,
     saveAlert,
     deleteAlert
@@ -18,6 +19,7 @@ router.use(apiLimiter);
 
 router.get('/stats', getStats);
 router.get('/trends', getTrends);
+router.get('/volume-by-provider', getVolumeByProvider);
 router.get('/financials', getFinancials);
 router.get('/reports', getReports);
 router.get('/live-traffic', getLiveTraffic);
