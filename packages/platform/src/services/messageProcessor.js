@@ -39,6 +39,8 @@ async function processMessage(messageId) {
             where: { id: message.organizationId },
             select: { billingPolicy: true }
         });
+        
+        const billingPolicy = org ? org.billingPolicy : 'ON_SUBMISSION';
 
         // Determine profile from metadata or default to TRANSACTIONAL
         const messageProfile = message.metadata?.profile || 'TRANSACTIONAL';
@@ -67,7 +69,7 @@ async function processMessage(messageId) {
         // ON_SUBMISSION: Only charge if provider accepted (deliveryResult.success)
         // ON_DELIVERY: (Handled via DLR webhook, but for now defaults to submission success)
         let finalPrice = 0;
-        if (org.billingPolicy === 'ON_ATTEMPT') {
+        if (billingPolicy === 'ON_ATTEMPT') {
             finalPrice = rate.pricePerSms;
         } else if (deliveryResult.success) {
             finalPrice = rate.pricePerSms;

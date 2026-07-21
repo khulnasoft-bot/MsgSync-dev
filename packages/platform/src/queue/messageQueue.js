@@ -20,12 +20,15 @@ if (process.env.NODE_ENV !== 'test') {
         return await processMessage(messageId);
     });
 
-    messageQueue.on('completed', (job, result) => {
-        console.log(`Job completed for message ${job.data.messageId}`);
-    });
-
-    messageQueue.on('failed', (job, err) => {
+    // Add retry logic
+    messageQueue.on('failed', async (job, err) => {
         console.error(`Job failed for message ${job.data.messageId}:`, err.message);
+        
+        // Retry logic: retry up to 3 times with exponential backoff
+        if (job.attemptsMade < 3) {
+            console.log(`Retrying job for message ${job.data.messageId}. Attempt ${job.attemptsMade + 1}`);
+            await job.retry();
+        }
     });
 }
 

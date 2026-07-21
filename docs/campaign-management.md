@@ -347,7 +347,7 @@ curl -X GET http://localhost:3001/api/bulk/campaigns/{id} \
 
 - **Documentation**: [Full API Docs](http://localhost:3001/docs)
 - **GitHub Issues**: [Report bugs](https://github.com/MsgSync/MsgSync/issues)
-- **Email**: support@msgsync.com
+- **Email**: support@khulnasoft.com
 - **Discord**: [Join community](https://discord.gg/msgsync)
 
 ### Feature Requests

@@ -15,12 +15,15 @@ class GenericHttpProvider {
    */
     async send(message) {
         try {
-            // Basic template replacement
-            const payload = JSON.parse(
-                JSON.stringify(this.payloadTemplate)
-                    .replace('{{content}}', message.content)
-                    .replace('{{recipient}}', message.recipient)
-            );
+            // Safer template replacement
+            const payload = { ...this.payloadTemplate };
+            for (const key in payload) {
+                if (typeof payload[key] === 'string') {
+                    payload[key] = payload[key]
+                        .replace('{{content}}', message.content)
+                        .replace('{{recipient}}', message.recipient);
+                }
+            }
 
             const response = await axios({
                 method: this.method,

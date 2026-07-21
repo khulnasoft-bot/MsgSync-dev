@@ -64,4 +64,4 @@ If you cannot find a solution here:
 
 1. Search the [GitHub Issues](https://github.com/MsgSync/MsgSync/issues).
 2. Start a discussion on [GitHub Discussions](https://github.com/MsgSync/MsgSync/discussions).
-3. Contact support at `support@msgsync.com`.
+3. Contact support at `support@khulnasoft.com`.
