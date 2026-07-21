@@ -18,11 +18,11 @@ importers:
         specifier: ^3.0.3
         version: 3.9.6
 
-  aggregator:
+  packages/aggregator:
     dependencies:
       '@msgsync/sdk':
         specifier: workspace:*
-        version: link:../sdk/js
+        version: link:../sdk-js
       '@prisma/client':
         specifier: ^5.10.2
         version: 5.22.0(prisma@5.22.0)
@@ -49,7 +49,7 @@ importers:
         specifier: ^6.3.3
         version: 6.3.4
 
-  platform:
+  packages/platform:
     dependencies:
       '@prisma/client':
         specifier: ^5.10.2
@@ -107,7 +107,7 @@ importers:
         specifier: ^6.3.3
         version: 6.3.4
 
-  sdk/js:
+  packages/sdk-js:
     dependencies:
       axios:
         specifier: ^1.7.0

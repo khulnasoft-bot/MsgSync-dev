@@ -213,11 +213,11 @@ open http://localhost:3001/dashboard
 pnpm install
 
 # Configure environment
-cp platform/.env.example platform/.env
+cp packages/platform/.env.example packages/platform/.env
 # Edit .env with your database and Redis URLs
 
 # Run migrations
-cd platform
+cd packages/platform
 npx prisma migrate dev
 pnpm run prisma:seed
 

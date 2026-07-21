@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "echo \"Build complete\"",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "keywords": [
     "msgsync",

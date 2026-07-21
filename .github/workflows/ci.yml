@@ -40,14 +40,14 @@ jobs:
       
     - name: Run Prisma migrations
       run: |
-        cd platform
+        cd packages/platform
         npx prisma migrate deploy
       env:
         DATABASE_URL: "postgresql://postgres:password@localhost:5432/msgsync_platform_test?schema=public"
 
     - name: Run Platform Tests
       run: |
-        cd platform
+        cd packages/platform
         pnpm test
       env:
         DATABASE_URL: "postgresql://postgres:password@localhost:5432/msgsync_platform_test?schema=public"
@@ -71,7 +71,7 @@ jobs:
 
     - name: Run Aggregator Tests
       run: |
-        cd aggregator
+        cd packages/aggregator
         pnpm test || echo "No tests yet"
 
   test-python-sdk:
