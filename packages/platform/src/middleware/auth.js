@@ -21,6 +21,7 @@ async function authenticate(req, res, next) {
     }
 
     try {
+        console.log('Keys in prisma instance:', Object.keys(prisma));
         const apiKey = await prisma.apiKey.findUnique({
             where: { key: apiKeyStr },
             include: { organization: true }
