@@ -216,7 +216,7 @@
 
         .charts-row {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -425,6 +425,14 @@
                     <canvas id="statusChart"></canvas>
                 </div>
             </div>
+            <div class="glass-card">
+                <div class="card-header" style="margin-bottom: 1.5rem;">
+                    <h2 style="font-size: 1rem;">Volume by Provider</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="providerChart"></canvas>
+                </div>
+            </div>
         </div>
 
         <div class="glass-card activity-card">
@@ -477,7 +485,7 @@
     <script>
         lucide.createIcons();
         const API_KEY = 'demo-api-key';
-        let trendChart, statusChart;
+        let trendChart, statusChart, providerChart;
 
         async function refreshData() {
             const bar = document.getElementById('loading-bar');
@@ -485,20 +493,22 @@
 
             try {
                 // Parallel fetching
-                const [msgRes, statsRes, trendRes] = await Promise.all([
+                const [msgRes, statsRes, trendRes, providerRes] = await Promise.all([
                     fetch('/api/messages', { headers: { 'X-API-Key': API_KEY } }),
                     fetch('/api/analytics/stats', { headers: { 'X-API-Key': API_KEY } }),
-                    fetch('/api/analytics/trends', { headers: { 'X-API-Key': API_KEY } })
+                    fetch('/api/analytics/trends', { headers: { 'X-API-Key': API_KEY } }),
+                    fetch('/api/analytics/volume-by-provider', { headers: { 'X-API-Key': API_KEY } })
                 ]);
 
                 const messages = await msgRes.json();
                 const stats = await statsRes.json();
                 const trends = await trendRes.json();
+                const providers = await providerRes.json();
 
                 bar.style.width = '70%';
 
-                if (messages.status === 'success' && stats.status === 'success' && trends.status === 'success') {
-                    updateUI(messages.data, stats.data, trends.data);
+                if (messages.status === 'success' && stats.status === 'success' && trends.status === 'success' && providers.status === 'success') {
+                    updateUI(messages.data, stats.data, trends.data, providers.data);
                 }
 
                 bar.style.width = '100%';
@@ -509,7 +519,7 @@
             }
         }
 
-        function updateUI(messages, stats, trends) {
+        function updateUI(messages, stats, trends, providers) {
             // Update counts
             document.getElementById('total-count').innerText = stats.total.toLocaleString();
             document.getElementById('sent-count').innerText = (stats.sent + stats.delivered).toLocaleString();
@@ -540,7 +550,7 @@
             lucide.createIcons({ props: { parent: list } });
 
             // Update Charts
-            updateCharts(stats, trends);
+            updateCharts(stats, trends, providers);
         }
 
         function getStatusClass(status) {
@@ -561,7 +571,7 @@
             }
         }
 
-        function updateCharts(stats, trends) {
+        function updateCharts(stats, trends, providers) {
             // Trend Chart
             const trendCtx = document.getElementById('trendChart').getContext('2d');
             const labels = trends.map(t => t.hour + ':00');
@@ -616,6 +626,31 @@
                         legend: { position: 'bottom', labels: { color: '#64748b', usePointStyle: true, font: { size: 10 } } }
                     },
                     cutout: '70%'
+                }
+            });
+
+            // Provider Chart
+            const providerCtx = document.getElementById('providerChart').getContext('2d');
+            if (providerChart) providerChart.destroy();
+            providerChart = new Chart(providerCtx, {
+                type: 'bar',
+                data: {
+                    labels: providers.map(p => p.provider),
+                    datasets: [{
+                        label: 'Messages',
+                        data: providers.map(p => p.count),
+                        backgroundColor: '#8b5cf6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    }
                 }
             });
         }
