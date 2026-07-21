@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { sendOTP, verifyOTP } = require("../controllers/otp");
-const authenticate = require("../middleware/auth");
-const { messageSendLimiter } = require("../middleware/rateLimiter");
+const { sendOTP, verifyOTP } = require('../controllers/otp');
+const authenticate = require('../middleware/auth');
+const { messageSendLimiter } = require('../middleware/rateLimiter');
 
 router.use(authenticate);
 
@@ -22,7 +22,7 @@ router.use(authenticate);
  *       200:
  *         description: OTP sent successfully
  */
-router.post("/send", messageSendLimiter, sendOTP);
+router.post('/send', messageSendLimiter, sendOTP);
 /**
  * @openapi
  * /otp/verify:
@@ -45,6 +45,6 @@ router.post("/send", messageSendLimiter, sendOTP);
  *       400:
  *         description: Invalid or expired code
  */
-router.post("/verify", verifyOTP);
+router.post('/verify', verifyOTP);
 
 module.exports = router;

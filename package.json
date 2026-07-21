@@ -2,16 +2,21 @@
   "name": "msgsync",
   "version": "1.0.0",
   "description": "A powerful SMS platform for seamless message synchronization and delivery",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "dev": "pnpm -r --parallel run dev",
+    "dev:platform": "pnpm --filter @msgsync/platform run dev",
+    "dev:aggregator": "pnpm --filter @msgsync/aggregator run dev",
+    "start": "pnpm -r --parallel run start",
+    "test": "pnpm -r run test",
+    "test:coverage": "pnpm -r run test -- --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "dev": "node index.js",
-    "start": "node index.js",
     "build": "pnpm -r run build",
-    "format": "prettier --write \"**/*.{js,json,md}\""
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "prisma:generate": "pnpm -r run prisma:generate",
+    "prisma:migrate": "pnpm -r run prisma:migrate",
+    "clean": "pnpm -r exec rm -rf node_modules"
   },
   "keywords": [
     "sms",
@@ -31,11 +36,6 @@
     "url": "https://github.com/MsgSync/MsgSync/issues"
   },
   "homepage": "https://github.com/MsgSync/MsgSync#readme",
-  "workspaces": [
-    "platform",
-    "aggregator",
-    "sdk/*"
-  ],
   "devDependencies": {
     "eslint": "^8.50.0",
     "jest": "^29.7.0",
