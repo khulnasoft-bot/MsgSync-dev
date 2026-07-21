@@ -47,6 +47,11 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// Health Check
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', component: 'platform' });
+});
+
 // Real-time Analytics Route
 app.get('/analytics', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'analytics.html'));
