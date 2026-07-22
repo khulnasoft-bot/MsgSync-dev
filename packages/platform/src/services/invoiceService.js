@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const auditService = require('./auditService');
 
 class InvoiceService {
     /**
@@ -48,6 +49,15 @@ class InvoiceService {
             }
         });
 
+        // Audit Log
+        await auditService.log({
+            action: 'GENERATE_INVOICE',
+            entity: 'Invoice',
+            entityId: invoice.id,
+            organizationId,
+            metadata: { number: invoiceNumber, total }
+        });
+
         return invoice;
     }
 
@@ -66,11 +76,23 @@ class InvoiceService {
     }
 
     async updateInvoiceStatus(id, status) {
-        return await prisma.invoice.update({
+        const invoice = await prisma.invoice.update({
             where: { id },
             data: { status }
         });
+
+        // Audit Log
+        await auditService.log({
+            action: 'UPDATE_INVOICE_STATUS',
+            entity: 'Invoice',
+            entityId: id,
+            organizationId: invoice.organizationId,
+            metadata: { status }
+        });
+
+        return invoice;
     }
+
 
     /**
    * Simulation of automated billing cycle run
