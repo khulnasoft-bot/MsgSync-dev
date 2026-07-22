@@ -177,6 +177,17 @@ async function pauseCampaign(req, res) {
             where: { id },
             data: { status: 'paused' }
         });
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'PAUSE_CAMPAIGN',
+            entity: 'Campaign',
+            entityId: id,
+            organizationId: campaign.organizationId || 'SYSTEM',
+            metadata: { name: campaign.name }
+        });
+
         res.status(200).json({ status: 'success', data: campaign });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -202,6 +213,16 @@ async function resumeCampaign(req, res) {
         const updated = await prisma.campaign.update({
             where: { id },
             data: { status: newStatus }
+        });
+
+        // Audit Log
+        const auditService = require('../services/auditService');
+        await auditService.log({
+            action: 'RESUME_CAMPAIGN',
+            entity: 'Campaign',
+            entityId: id,
+            organizationId: updated.organizationId || 'SYSTEM',
+            metadata: { name: updated.name }
         });
 
         // If resuming to running, restart campaign processing
